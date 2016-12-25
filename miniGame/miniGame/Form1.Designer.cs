@@ -45,11 +45,11 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(384, 98);
+            this.label2.Location = new System.Drawing.Point(78, 292);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(72, 13);
+            this.label2.Size = new System.Drawing.Size(86, 13);
             this.label2.TabIndex = 1;
-            this.label2.Text = "label spostata";
+            this.label2.Text = "AHHHHHHHHH";
             // 
             // Form1
             // 
@@ -61,6 +61,7 @@
             this.Controls.Add(this.label1);
             this.Name = "Form1";
             this.Text = "miniGame";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
