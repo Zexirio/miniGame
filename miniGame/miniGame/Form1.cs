@@ -14,6 +14,9 @@ namespace miniGame
 {
     public partial class Form1 : Form
     {
+        TcpClient client;
+        TcpListener listener;
+        bool first = true;
         public Form1()
         {
             InitializeComponent();
@@ -24,7 +27,6 @@ namespace miniGame
         public void Form1_Load(object sender, EventArgs e)
         {
             button1.Enabled = false;
- 
         }
 
         public void msg(string mesg)
@@ -63,36 +65,41 @@ namespace miniGame
             string textToSend = DateTime.Now.ToString();
 
             //---create a TCPClient object at the IP and port no.---
-            TcpClient client = new TcpClient(serverIP.Text, Convert.ToInt32(serverPORT.Text));
+            //TcpClient client = new TcpClient(serverIP.Text, Convert.ToInt32(serverPORT.Text));
+            if(first) client = new TcpClient(serverIP.Text, Convert.ToInt32(serverPORT.Text));
+            first = false;
             NetworkStream nwStream = client.GetStream();
-            byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(textToSend);
+            byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(MessageToSend.Text);
 
             //---send the text---
-            Console.WriteLine("Sending : " + textToSend);
+            //Console.WriteLine("Sending : " + textToSend);
             nwStream.Write(bytesToSend, 0, bytesToSend.Length);
 
             //---read back the text---
             byte[] bytesToRead = new byte[client.ReceiveBufferSize];
             int bytesRead = nwStream.Read(bytesToRead, 0, client.ReceiveBufferSize);
-            Console.WriteLine("Received : " + Encoding.ASCII.GetString(bytesToRead, 0, bytesRead));
-            Console.ReadLine();
-            if(client.Connected) {
+            //Console.WriteLine("Received : " + Encoding.ASCII.GetString(bytesToRead, 0, bytesRead));
+            //Console.ReadLine();
+            /*if(client.Connected) {
                 MessageBox.Show("CRISTIDDIO E MIT LA PRIMAAAA");
-            }
-            client.Close();
+                connectionTimer.Start();
+            }*/
+            //client.Close();
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
             //---listen at the specified IP and port no.---
             IPAddress localAdd = IPAddress.Parse(hostingIP.Text);
-            TcpListener listener = new TcpListener(localAdd, Convert.ToInt32(hostingPORT.Text));
-            Console.WriteLine("Listening...");
+            //TcpListener listener = new TcpListener(localAdd, Convert.ToInt32(hostingPORT.Text));
+            listener = new TcpListener(localAdd, Convert.ToInt32(hostingPORT.Text));
+
+            //Console.WriteLine("Listening...");
             listener.Start();
 
             //---incoming client connected---
             TcpClient client = listener.AcceptTcpClient();
-            if (client.Connected) MessageBox.Show("Va");
+            //if (client.Connected) MessageBox.Show("Va");
 ;            //---get the incoming data through a network stream---
             NetworkStream nwStream = client.GetStream();
             byte[] buffer = new byte[client.ReceiveBufferSize];
@@ -102,14 +109,21 @@ namespace miniGame
 
             //---convert the data received into a string---
             string dataReceived = Encoding.ASCII.GetString(buffer, 0, bytesRead);
-            Console.WriteLine("Received : " + dataReceived);
-
+            //Console.WriteLine("Received : " + dataReceived);
+            richTextBox1.Text += dataReceived;
             //---write back the text to the client---
-            Console.WriteLine("Sending back : " + dataReceived);
+            //Console.WriteLine("Sending back : " + dataReceived);
             nwStream.Write(buffer, 0, bytesRead);
-            client.Close();
-            listener.Stop();
+            //client.Close();
+            //listener.Stop();
             //Console.ReadLine();
+        }
+
+        private void button2_Click_1(object sender, EventArgs e)
+        {
+            NetworkStream nwStream = client.GetStream();
+            byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(MessageToSend.Text);
+            nwStream.Write(bytesToSend, 0, bytesToSend.Length);
         }
     }
 }

@@ -29,14 +29,17 @@
         private void InitializeComponent()
         {
             this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
+            this.connectingBUTTON = new System.Windows.Forms.Button();
+            this.hostingBUTTON = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.serverIP = new System.Windows.Forms.TextBox();
             this.hostingIP = new System.Windows.Forms.TextBox();
             this.serverPORT = new System.Windows.Forms.TextBox();
             this.hostingPORT = new System.Windows.Forms.TextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.MessageToSend = new System.Windows.Forms.TextBox();
+            this.button2 = new System.Windows.Forms.Button();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -53,25 +56,25 @@
             this.button1.TabIndex = 0;
             this.button1.UseVisualStyleBackColor = false;
             // 
-            // button2
+            // connectingBUTTON
             // 
-            this.button2.Location = new System.Drawing.Point(29, 39);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(150, 21);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "MI CONNEGGIO";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.connectingBUTTON.Location = new System.Drawing.Point(29, 39);
+            this.connectingBUTTON.Name = "connectingBUTTON";
+            this.connectingBUTTON.Size = new System.Drawing.Size(150, 21);
+            this.connectingBUTTON.TabIndex = 1;
+            this.connectingBUTTON.Text = "MI CONNEGGIO";
+            this.connectingBUTTON.UseVisualStyleBackColor = true;
+            this.connectingBUTTON.Click += new System.EventHandler(this.button2_Click);
             // 
-            // button3
+            // hostingBUTTON
             // 
-            this.button3.Location = new System.Drawing.Point(29, 34);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(150, 23);
-            this.button3.TabIndex = 2;
-            this.button3.Text = "APRO IL SERVER";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.hostingBUTTON.Location = new System.Drawing.Point(29, 34);
+            this.hostingBUTTON.Name = "hostingBUTTON";
+            this.hostingBUTTON.Size = new System.Drawing.Size(150, 23);
+            this.hostingBUTTON.TabIndex = 2;
+            this.hostingBUTTON.Text = "APRO IL SERVER";
+            this.hostingBUTTON.UseVisualStyleBackColor = true;
+            this.hostingBUTTON.Click += new System.EventHandler(this.button3_Click);
             // 
             // label1
             // 
@@ -126,25 +129,55 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.button2);
+            this.splitContainer1.Panel1.Controls.Add(this.connectingBUTTON);
             this.splitContainer1.Panel1.Controls.Add(this.serverIP);
             this.splitContainer1.Panel1.Controls.Add(this.serverPORT);
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.button3);
+            this.splitContainer1.Panel2.Controls.Add(this.hostingBUTTON);
             this.splitContainer1.Panel2.Controls.Add(this.hostingIP);
             this.splitContainer1.Panel2.Controls.Add(this.hostingPORT);
             this.splitContainer1.Size = new System.Drawing.Size(444, 186);
             this.splitContainer1.SplitterDistance = 94;
             this.splitContainer1.TabIndex = 8;
             // 
+            // MessageToSend
+            // 
+            this.MessageToSend.Location = new System.Drawing.Point(811, 381);
+            this.MessageToSend.Name = "MessageToSend";
+            this.MessageToSend.Size = new System.Drawing.Size(175, 20);
+            this.MessageToSend.TabIndex = 9;
+            this.MessageToSend.Text = "text";
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(811, 407);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(175, 23);
+            this.button2.TabIndex = 10;
+            this.button2.Text = "SEND";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click_1);
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.richTextBox1.Location = new System.Drawing.Point(811, 194);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.Size = new System.Drawing.Size(175, 181);
+            this.richTextBox1.TabIndex = 11;
+            this.richTextBox1.Text = "";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(819, 437);
+            this.ClientSize = new System.Drawing.Size(998, 437);
+            this.Controls.Add(this.richTextBox1);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.MessageToSend);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button1);
@@ -166,14 +199,17 @@
         #endregion
 
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button connectingBUTTON;
+        private System.Windows.Forms.Button hostingBUTTON;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox serverIP;
         private System.Windows.Forms.TextBox hostingIP;
         private System.Windows.Forms.TextBox serverPORT;
         private System.Windows.Forms.TextBox hostingPORT;
         private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.TextBox MessageToSend;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.RichTextBox richTextBox1;
     }
 }
 
