@@ -85,6 +85,7 @@
             this.MessageToSend.Name = "MessageToSend";
             this.MessageToSend.Size = new System.Drawing.Size(251, 20);
             this.MessageToSend.TabIndex = 9;
+            this.MessageToSend.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MessageToSend_KeyDown);
             // 
             // button2
             // 

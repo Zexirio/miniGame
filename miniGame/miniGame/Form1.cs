@@ -16,7 +16,7 @@ namespace miniGame
     {
         bool isHost;
         Socket client;
-        string host = "25.108.14.68";
+        string host;
         int port = 9999;
         byte[] bytes_in = new byte[1024];
         Socket server = default(Socket);
@@ -62,6 +62,7 @@ namespace miniGame
 
         private void button2_Click(object sender, EventArgs e)
         {
+            host = serverIP.Text;
             client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             IPAddress IP = IPAddress.Parse(host);
             IPEndPoint xIpEndPoint = new IPEndPoint(IP, port);
@@ -224,6 +225,13 @@ namespace miniGame
 
             return true;
         }
-        
+
+        private void MessageToSend_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.KeyCode == Keys.Enter)
+            {
+                button2.PerformClick();
+            }
+        }
     }
 }
