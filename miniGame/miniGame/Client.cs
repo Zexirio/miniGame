@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Windows.Forms;
 
 namespace miniGame
@@ -19,7 +18,7 @@ namespace miniGame
                      , RichTextBox rtb
                      , string serverIP
                      , Button pg
-                     , int port) {
+                     , int port ) {
             this.rtb = rtb;
             this.serverIP = serverIP;
             this.pg = pg;
@@ -27,21 +26,19 @@ namespace miniGame
             this.port = port;
         }
 
-        private void OnSend(IAsyncResult ar) { client.EndSend(ar); }
-
-        public Socket getClient() {
-            return client;
-        }
+        public Socket getClient() { return client; }
 
         public void connect() {
             client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            IPAddress IP = IPAddress.Parse(serverIP);
-            IPEndPoint xIpEndPoint = new IPEndPoint(IP, port);
-            client.BeginConnect(xIpEndPoint, new AsyncCallback(OnConnect), null);
+            client.BeginConnect(
+                  new IPEndPoint(IPAddress.Parse(serverIP), port)
+                , new AsyncCallback(OnConnect)
+                , null);
         }
 
-        public void OnConnect(IAsyncResult ar) 
-        {
+        private void OnSend(IAsyncResult ar) { client.EndSend(ar); }
+
+        private void OnConnect(IAsyncResult ar) {
             if (client.Connected) {
                 MessageBox.Show("Connected");
             } else {
@@ -50,8 +47,7 @@ namespace miniGame
             client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive), client);
         }
 
-        private void OnReceive(IAsyncResult ar)
-        {
+        private void OnReceive(IAsyncResult ar) {
             client = (Socket)ar.AsyncState;
             client.EndReceive(ar);
             client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive), client);
