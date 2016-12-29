@@ -14,116 +14,216 @@ namespace miniGame
 {
     public partial class Form1 : Form
     {
-        TcpClient client;
-        TcpListener listener;
-        bool first = true;
+        bool isHost;
+        Socket client;
+        string host = "127.0.0.1";
+        int port = 9999;
+        byte[] bytes_in = new byte[1024];
+        Socket server = default(Socket);
+        Socket client_ = default(Socket);
+        byte[] bytes_out = new byte[1024];
+
+
         public Form1()
         {
             InitializeComponent();
         }
 
-        TcpClient clientSocket = new TcpClient();
 
-        public void Form1_Load(object sender, EventArgs e)
+        //Client -----------------------------------
+        //---------------------------------------------------------------
+        private void OnSend(IAsyncResult ar)
         {
-            button1.Enabled = false;
+            client.EndSend(ar);
         }
 
-        public void msg(string mesg)
+        private void OnConnect(IAsyncResult ar)
         {
-            //textBox1.Text = textBox1.Text + Environment.NewLine + " >> " + mesg;
-        }
-
-        private void mover(object sender, KeyEventArgs e)
-        {
-            switch (e.KeyCode)
+            //client.EndConnect(ar)
+            if (client.Connected == true)
             {
-                case Keys.W:
-                    Console.WriteLine("w");
-                    button1.Top -= 5;
-                    break;
-
-                case Keys.S:
-                    Console.WriteLine("s");
-                    button1.Top += 5;
-                    break;
-
-                case Keys.A:
-                    Console.WriteLine("a");
-                    button1.Left -= 5;
-                    break;
-
-                case Keys.D:
-                    Console.WriteLine("d");
-                    button1.Left += 5;
-                    break;
+                MessageBox.Show("Connected");
             }
+            else
+            {
+                MessageBox.Show("Not Connected");
+            }
+            client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive), client);
+        }
+
+        private void OnReceive(IAsyncResult ar)
+        {
+            client = (Socket)ar.AsyncState;
+            client.EndReceive(ar);
+            client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive), client);
+            string message = System.Text.ASCIIEncoding.ASCII.GetString(bytes_in);
+            Chat(message);
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            string textToSend = DateTime.Now.ToString();
-
-            //---create a TCPClient object at the IP and port no.---
-            //TcpClient client = new TcpClient(serverIP.Text, Convert.ToInt32(serverPORT.Text));
-            if(first) client = new TcpClient(serverIP.Text, Convert.ToInt32(serverPORT.Text));
-            first = false;
-            NetworkStream nwStream = client.GetStream();
-            byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(MessageToSend.Text);
-
-            //---send the text---
-            //Console.WriteLine("Sending : " + textToSend);
-            nwStream.Write(bytesToSend, 0, bytesToSend.Length);
-
-            //---read back the text---
-            byte[] bytesToRead = new byte[client.ReceiveBufferSize];
-            int bytesRead = nwStream.Read(bytesToRead, 0, client.ReceiveBufferSize);
-            //Console.WriteLine("Received : " + Encoding.ASCII.GetString(bytesToRead, 0, bytesRead));
-            //Console.ReadLine();
-            /*if(client.Connected) {
-                MessageBox.Show("CRISTIDDIO E MIT LA PRIMAAAA");
-                connectionTimer.Start();
-            }*/
-            //client.Close();
+            client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            IPAddress IP = IPAddress.Parse(host);
+            IPEndPoint xIpEndPoint = new IPEndPoint(IP, port);
+            client.BeginConnect(xIpEndPoint, new AsyncCallback(OnConnect), null);
         }
+
+        private void mover(object sender, KeyEventArgs e)
+        {
+            byte[] bytes;
+            bool moved = false;
+            switch (e.KeyCode)
+            {
+                case Keys.W:
+                    pg.Top -= 5;
+                    moved = true;
+                    break;
+
+                case Keys.S:
+                    pg.Top += 5;
+                    moved = true;
+                    break;
+
+                case Keys.A:
+                    pg.Left -= 5;
+                    moved = true;
+                    break;
+
+                case Keys.D:
+                    pg.Left += 5;
+                    moved = true;
+                    break;
+            }
+            if (moved)
+            {
+                bytes = Encoding.ASCII.GetBytes("mov," + pg.Location.X + "," + pg.Location.Y);
+
+                client.Send(bytes, bytes.Length, SocketFlags.None);
+            }
+        }
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (isHost == false)
+            {
+                if (checkBox1.CheckState == CheckState.Checked)
+                {
+                    pg.Focus();
+                }
+            }
+        }
+        //------------------------------------------------------------------
+        //------------------------------------------------------------------
+        //------------------------------------------------------------------
+        //------------------------------------------------------------------
+
+
+
+
+        //Roba Server ----------------------------
+        //---------------------------------------------------------------
+        public void Form1_Load(object sender, EventArgs e)
+        {
+            DialogResult dialogResult = MessageBox.Show("Host?", "-", MessageBoxButtons.YesNo);
+            if (dialogResult == DialogResult.Yes)
+            {
+                isHost = true;
+                server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                IPEndPoint xEndpoint = new IPEndPoint(IPAddress.Any, 9999);
+                server.Bind(xEndpoint);
+                server.Listen(2);
+                server.BeginAccept(new AsyncCallback(OnAccept_Server), null);
+                connectingBUTTON.Enabled = false;
+            }
+            else if (dialogResult == DialogResult.No)
+            {
+                isHost = false;
+            }
+           
+        }
+        private void OnAccept_Server(IAsyncResult ar)
+        {
+            if (isHost)
+            { 
+            client_ = server.EndAccept(ar);
+            client_.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive_Server), client_);
+            }
+        }
+        private void OnReceive_Server(IAsyncResult ar)
+        {
+            if (isHost)
+            {
+                client_ = (Socket)ar.AsyncState;
+                client_.EndReceive(ar);
+                client_.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive_Server), client_);
+                string message = System.Text.ASCIIEncoding.ASCII.GetString(bytes_in);
+                //if (Convert.ToString(bytes) == "/ip") {MessageBox.Show("Richiesta ip(???)");}
+                if (message.Contains("mov"))
+                {
+                    string[] xy = message.Split(',');
+                    // button2.Location = new Point(Convert.ToInt32(xy[1]), Convert.ToInt32(xy[2]));
+                    Move(Convert.ToInt32(xy[1]), Convert.ToInt32(xy[2]));
+                }
+                Chat(message);
+            }
+            
+           
+        }
+        public void Move(int x, int y)
+        {
+            if (isHost)
+            {
+                if (ControlInvokeRequired(pg, () => Move(x, y))) return;
+                pg.Location = new Point(x, y);
+            }
+            
+        }
+        //---------------------------------------------------------------------
+        //--------------------------------------------------------
+
+
+
+        
+
+       
 
         private void button3_Click(object sender, EventArgs e)
         {
-            //---listen at the specified IP and port no.---
-            IPAddress localAdd = IPAddress.Parse(hostingIP.Text);
-            //TcpListener listener = new TcpListener(localAdd, Convert.ToInt32(hostingPORT.Text));
-            listener = new TcpListener(localAdd, Convert.ToInt32(hostingPORT.Text));
 
-            //Console.WriteLine("Listening...");
-            listener.Start();
-
-            //---incoming client connected---
-            TcpClient client = listener.AcceptTcpClient();
-            //if (client.Connected) MessageBox.Show("Va");
-;            //---get the incoming data through a network stream---
-            NetworkStream nwStream = client.GetStream();
-            byte[] buffer = new byte[client.ReceiveBufferSize];
-
-            //---read incoming stream---
-            int bytesRead = nwStream.Read(buffer, 0, client.ReceiveBufferSize);
-
-            //---convert the data received into a string---
-            string dataReceived = Encoding.ASCII.GetString(buffer, 0, bytesRead);
-            //Console.WriteLine("Received : " + dataReceived);
-            richTextBox1.Text += dataReceived;
-            //---write back the text to the client---
-            //Console.WriteLine("Sending back : " + dataReceived);
-            nwStream.Write(buffer, 0, bytesRead);
-            //client.Close();
-            //listener.Stop();
-            //Console.ReadLine();
         }
 
+
+        //Both
+        //---------------------
         private void button2_Click_1(object sender, EventArgs e)
         {
-            NetworkStream nwStream = client.GetStream();
-            byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(MessageToSend.Text);
-            nwStream.Write(bytesToSend, 0, bytesToSend.Length);
+            if (isHost)
+            {
+                Chat("Host: " + MessageToSend.Text);
+                byte[] bytes = Encoding.ASCII.GetBytes("Host: " + MessageToSend.Text);
+                client_.Send(bytes, bytes.Length, SocketFlags.None);
+                MessageToSend.Clear();
+            }
+            else
+            {
+                Chat("Client: " + MessageToSend.Text);
+                byte[] bytes = Encoding.ASCII.GetBytes("Client: " + MessageToSend.Text);
+                client.Send(bytes, bytes.Length, SocketFlags.None);
+            }
+            MessageToSend.Clear();
         }
+        public void Chat(String msg)
+        {
+            if (ControlInvokeRequired(richTextBox1, () => Chat(msg))) return;
+            richTextBox1.AppendText(msg);
+            richTextBox1.AppendText("\n");
+        }
+        public bool ControlInvokeRequired(Control c, Action a)
+        {
+            if (c.InvokeRequired) c.Invoke(new MethodInvoker(delegate { a(); }));
+            else return false;
+
+            return true;
+        }
+        
     }
 }
