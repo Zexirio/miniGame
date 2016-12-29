@@ -16,7 +16,7 @@ namespace miniGame
     {
         bool isHost;
         Socket client;
-        string host = "127.0.0.1";
+        string host = "25.108.14.68";
         int port = 9999;
         byte[] bytes_in = new byte[1024];
         Socket server = default(Socket);
