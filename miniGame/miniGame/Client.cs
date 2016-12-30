@@ -60,7 +60,7 @@ namespace miniGame
                 if (!client.Connected) {
                     client.Disconnect(false);
                     f1.setEnabled(false);
-                    MessageBox.Show("Server has been closed the connection");
+                    MessageBox.Show("Server has closed the connection");
                 } else {
                     MessageBox.Show(ex.StackTrace);
                 }
