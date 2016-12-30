@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Windows.Forms;
 
 namespace miniGame
@@ -34,6 +35,7 @@ namespace miniGame
                   new IPEndPoint(IPAddress.Parse(serverIP), port)
                 , new AsyncCallback(OnConnect)
                 , null);
+            f1.setEnabled(true);
         }
 
         private void OnSend(IAsyncResult ar) { client.EndSend(ar); }
@@ -49,10 +51,20 @@ namespace miniGame
 
         private void OnReceive(IAsyncResult ar) {
             client = (Socket)ar.AsyncState;
-            client.EndReceive(ar);
-            client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive), client);
-            string message = System.Text.ASCIIEncoding.ASCII.GetString(bytes_in);
-            f1.Chat(message);
+            try {
+                client.EndReceive(ar);
+                client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive), client);
+                string message = Encoding.ASCII.GetString(bytes_in);
+                f1.Chat(message);
+            } catch(Exception ex) {
+                if (!client.Connected) {
+                    MessageBox.Show("Server has been closed the connection");
+                    client.Disconnect(false);
+                    f1.setEnabled(false);
+                } else {
+                    MessageBox.Show(ex.StackTrace);
+                }
+            }
         }
     }
 }

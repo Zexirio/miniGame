@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace miniGame
@@ -14,16 +15,14 @@ namespace miniGame
         Server myServer;
         Client myClient;
 
-        public Form1()
-        {
-            InitializeComponent();
-        }
+        public Form1() { InitializeComponent(); }
 
         public void Form1_Load(object sender, EventArgs e)
         {
+            button2.Enabled = false;
+            richTextBox1.ReadOnly = true;
             DialogResult dialogResult = MessageBox.Show("Host?", "-", MessageBoxButtons.YesNo);
-            if (dialogResult == DialogResult.Yes)
-            {
+            if (dialogResult == DialogResult.Yes) {
                 isHost = true;
                 myServer = new Server(this, pg);
                 connectingBUTTON.Enabled = false;
@@ -73,17 +72,17 @@ namespace miniGame
             }
         }
 
-        public void button2_Click(object sender, EventArgs e) 
-        {
+        public void button2_Click(object sender, EventArgs e) {
             myClient.connect();
+            if(myClient.getClient().Connected) { button2.Enabled = true; }
         }
 
+        public void setEnabled(bool status) {
+            if (ControlInvokeRequired(button2, () => button2.Enabled = status)) return;
+            button2.Enabled = status;
+        }
 
-
-        //Both
-        //---------------------
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
+        private void checkBox1_CheckedChanged(object sender, EventArgs e) {
             if (checkBox1.CheckState == CheckState.Checked) { pg.Focus(); }
         }
 

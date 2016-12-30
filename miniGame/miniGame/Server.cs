@@ -28,19 +28,30 @@ namespace miniGame
         private void OnAccept_Server(IAsyncResult ar) {
             client = server.EndAccept(ar);
             client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive_Server), client);
+            f1.setEnabled(true);
         }
 
         private void OnReceive_Server(IAsyncResult ar) {
             client = (Socket)ar.AsyncState;
-            client.EndReceive(ar);
-            client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive_Server), client);
-            string message = Encoding.ASCII.GetString(bytes_in);
-            if (message.Contains("mov"))
-            {
-                string[] xy = message.Split(',');
-                Move(Convert.ToInt32(xy[1]), Convert.ToInt32(xy[2]));
+            try {
+                client.EndReceive(ar); 
+                client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive_Server), client);
+                string message = Encoding.ASCII.GetString(bytes_in);
+                if (message.Contains("mov")) {
+                    string[] xy = message.Split(',');
+                    Move(Convert.ToInt32(xy[1]), Convert.ToInt32(xy[2]));
+                }
+                f1.Chat(message);
             }
-            f1.Chat(message);
+            catch (Exception ex) {
+                if(!client.Connected) {
+                    MessageBox.Show("Client disconnected from session");
+                    client.Disconnect(false);
+                    f1.setEnabled(false);
+                } else {
+                    MessageBox.Show(ex.StackTrace);
+                }
+            }
         }
         public void Move(int x, int y) {
             if (f1.ControlInvokeRequired(pg, () => Move(x, y))) return;
