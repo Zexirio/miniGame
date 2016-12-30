@@ -58,9 +58,9 @@ namespace miniGame
                 f1.Chat(message);
             } catch(Exception ex) {
                 if (!client.Connected) {
-                    MessageBox.Show("Server has been closed the connection");
                     client.Disconnect(false);
                     f1.setEnabled(false);
+                    MessageBox.Show("Server has been closed the connection");
                 } else {
                     MessageBox.Show(ex.StackTrace);
                 }

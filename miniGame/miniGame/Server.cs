@@ -45,9 +45,9 @@ namespace miniGame
             }
             catch (Exception ex) {
                 if(!client.Connected) {
-                    MessageBox.Show("Client disconnected from session");
                     client.Disconnect(false);
                     f1.setEnabled(false);
+                    MessageBox.Show("Client disconnected from session");
                 } else {
                     MessageBox.Show(ex.StackTrace);
                 }
