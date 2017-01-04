@@ -19,7 +19,7 @@ namespace miniGame
         {
             button2.Enabled = false;
             richTextBox1.ReadOnly = true;
-            DialogResult dialogResult = MessageBox.Show("Host?", "-", MessageBoxButtons.YesNo);
+            /*DialogResult dialogResult = MessageBox.Show("Host?", "-", MessageBoxButtons.YesNo);
             if (dialogResult == DialogResult.Yes) {
                 isHost = true;
                 myServer = new Server(this, pg);
@@ -33,7 +33,7 @@ namespace miniGame
                                      , pg
                                      , 9999 );
                 isHost = false;
-            }
+            }*/
 
         }
         public void mover(object sender, KeyEventArgs e)
@@ -62,22 +62,60 @@ namespace miniGame
                     moved = true;
                     break;
             }
-            if (moved)
-            {
+            if (moved) {
                 bytes = Encoding.ASCII.GetBytes("mov," + pg.Location.X + "," + pg.Location.Y);
-
                 myClient.getClient().Send(bytes, bytes.Length, SocketFlags.None);
             }
         }
 
-        public void button2_Click(object sender, EventArgs e) {
-            myClient.connect();
-            if(myClient.getClient().Connected) { button2.Enabled = true; }
+        public void connectingBUTTON_Click(object sender, EventArgs e) {
+            if(connectingBUTTON.Text.Equals("MI CONNEGGIO")) {
+                DialogResult dialogResult = MessageBox.Show("Vuoi avvià la connessione?", "-", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes) {
+                    connectingBUTTON.Text = "CHIUDO";
+                    isHost = false;
+                    startClient();
+                    Host.Enabled = false;
+                }
+            } else if(connectingBUTTON.Text.Equals("CHIUDO")) {
+                connectingBUTTON.Text = "MI CONNEGGIO";
+                Host.Enabled = true;
+                closeClient();
+            }
         }
 
-        public void setEnabled(bool status) {
+        private void Host_Click(object sender, EventArgs e) {
+            if (Host.Text.Equals("ECCHIUDI")) {
+                Host.Text = "HOSTIO";
+                connectingBUTTON.Enabled = true;
+                closeServer();
+                if (myClient != null) { closeClient(); }
+            } else if (Host.Text.Equals("HOSTIO")) {
+                DialogResult dialogResult = MessageBox.Show("Vuoi avvià il server?", "-", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    Host.Text = "ECCHIUDI";
+                    isHost = true;
+                    if (myClient != null) { closeClient(); }
+                    startServer();
+                    connectingBUTTON.Enabled = false;
+                }
+            } else { /*boh non dovrebbe entrare qua dentro*/ }
+        }
+
+        public void setSendButtonStatus(bool status) {
             if (ControlInvokeRequired(button2, () => button2.Enabled = status)) return;
             button2.Enabled = status;
+        }
+
+        public void setHostButtonStatus(bool status) {
+            if (ControlInvokeRequired(button2, () => Host.Enabled = status)) return;
+            Host.Enabled = status;
+        }
+
+        public void setClientButtonText(string Text) {
+            if (ControlInvokeRequired(button2, () => connectingBUTTON.Text = Text)) return;
+            connectingBUTTON.Text = Text;
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e) {
@@ -111,20 +149,65 @@ namespace miniGame
             richTextBox1.AppendText("\n");
         }
 
-        public bool ControlInvokeRequired(Control c, Action a)
-        {
+        public bool ControlInvokeRequired(Control c, Action a) {
             if (c.InvokeRequired) c.Invoke(new MethodInvoker(delegate { a(); }));
             else return false;
 
             return true;
         }
 
-        private void MessageToSend_KeyDown(object sender, KeyEventArgs e)
-        {
-            if(e.KeyCode == Keys.Enter)
-            {
-                button2.PerformClick();
+        private void MessageToSend_KeyDown(object sender, KeyEventArgs e) {
+            if(e.KeyCode == Keys.Enter) { button2.PerformClick(); }
+        }
+
+        private void radioButton_CheckedChanged(object sender, EventArgs e) {
+            /*if(radioButton1.Checked) {
+                DialogResult dialogResult = MessageBox.Show("Vuoi avvià il server?", "-", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes) {
+                    isHost = true;
+                    if (myClient != null) { closeClient(); }
+                    startServer();
+                }                
+            } else {
+                DialogResult dialogResult = MessageBox.Show("Vuoi avvià la connessione?", "-", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes) {
+                    isHost = false;
+                    if (myServer != null) { closeServer(); }
+                    startClient();
+                }
+                
+            }*/
+        }
+
+        private void startServer() {
+            if ( myServer != null && myServer.getClient() != null) { closeServer(); }
+            isHost = true;
+            myServer = new Server(this, pg);
+            connectingBUTTON.Enabled = false;
+        }
+
+        private void startClient() {
+            if (myClient != null && myClient.getClient() != null) { closeClient(); }
+            connectingBUTTON.Enabled = true;
+            myClient = new Client(this
+                                 , richTextBox1
+                                 , serverIP.Text
+                                 , pg
+                                 , 9999);
+            isHost = false;
+            myClient.connect();
+        }
+
+        private void closeServer() {
+            if(myServer.getServer() != null) {
+               if(myServer.getClient()!=null) myServer.getClient().Close();
+                myServer.getServer().Close();
             }
         }
+
+        private void closeClient() {
+            if(myClient.getClient() != null) { myClient.getClient().Close(); }
+        }
+        
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Net.Sockets;
 using System.Text;
@@ -19,16 +18,20 @@ namespace miniGame
             this.f1 = f1;
             this.pg = pg;
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            IPEndPoint xEndpoint = new IPEndPoint(IPAddress.Any, 9999);
-            server.Bind(xEndpoint);
+            server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+            server.Bind(new IPEndPoint(IPAddress.Any, 9999));
             server.Listen(2);
             server.BeginAccept(new AsyncCallback(OnAccept_Server), null);
         }
 
         private void OnAccept_Server(IAsyncResult ar) {
-            client = server.EndAccept(ar);
-            client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive_Server), client);
-            f1.setEnabled(true);
+            try {
+                client = server.EndAccept(ar);
+                client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive_Server), client);
+                f1.setSendButtonStatus(true);
+            } catch(Exception ex) {
+                //fottesega
+            }
         }
 
         private void OnReceive_Server(IAsyncResult ar) {
@@ -44,9 +47,9 @@ namespace miniGame
                 f1.Chat(message);
             }
             catch (Exception ex) {
-                if(!client.Connected) {
-                    client.Disconnect(false);
-                    f1.setEnabled(false);
+                if (!client.Connected) {
+                    client.Close();
+                    f1.setSendButtonStatus(false);
                     MessageBox.Show("Client disconnected from session");
                 } else {
                     MessageBox.Show(ex.StackTrace);
@@ -56,9 +59,9 @@ namespace miniGame
         public void Move(int x, int y) {
             if (f1.ControlInvokeRequired(pg, () => Move(x, y))) return;
             pg.Location = new Point(x, y);
-
         }
 
         public Socket getClient() { return client; }
+        public Socket getServer() { return server; }
     }
 }

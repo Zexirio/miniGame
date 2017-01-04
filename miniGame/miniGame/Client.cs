@@ -6,8 +6,7 @@ using System.Windows.Forms;
 
 namespace miniGame
 {
-    class Client
-    {
+    public class Client {
         RichTextBox rtb;
         Button pg;
         Form1 f1;
@@ -30,12 +29,20 @@ namespace miniGame
         public Socket getClient() { return client; }
 
         public void connect() {
-            client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            client.BeginConnect(
-                  new IPEndPoint(IPAddress.Parse(serverIP), port)
-                , new AsyncCallback(OnConnect)
-                , null);
-            f1.setEnabled(true);
+            try {
+                client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                client.BeginConnect(
+                      new IPEndPoint(IPAddress.Parse(serverIP), port)
+                    , new AsyncCallback(OnConnect)
+                    , null);
+            } catch(Exception ex) {
+                if(!client.Connected) {
+                    MessageBox.Show("Can't connect");
+                    f1.setSendButtonStatus(false);
+                }
+                else { MessageBox.Show(ex.StackTrace); }
+            }
         }
 
         private void OnSend(IAsyncResult ar) { client.EndSend(ar); }
@@ -43,10 +50,15 @@ namespace miniGame
         private void OnConnect(IAsyncResult ar) {
             if (client.Connected) {
                 MessageBox.Show("Connected");
-            } else {
-                MessageBox.Show("Not Connected");
+                client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive), client);
+                f1.setSendButtonStatus(true);
             }
-            client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive), client);
+            else {
+                MessageBox.Show("Not Connected");
+                f1.setSendButtonStatus(false);
+                f1.setHostButtonStatus(true);
+                f1.setClientButtonText("MI CONNEGGIO");
+            }
         }
 
         private void OnReceive(IAsyncResult ar) {
@@ -58,9 +70,9 @@ namespace miniGame
                 f1.Chat(message);
             } catch(Exception ex) {
                 if (!client.Connected) {
-                    client.Disconnect(false);
-                    f1.setEnabled(false);
-                    MessageBox.Show("Server has been closed the connection");
+                    client.Close();
+                    f1.setSendButtonStatus(false);
+                    MessageBox.Show("Server has closed the connection");
                 } else {
                     MessageBox.Show(ex.StackTrace);
                 }

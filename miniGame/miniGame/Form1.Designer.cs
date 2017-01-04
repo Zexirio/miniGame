@@ -36,6 +36,7 @@
             this.button2 = new System.Windows.Forms.Button();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.Host = new System.Windows.Forms.Button();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.SuspendLayout();
@@ -59,7 +60,7 @@
             this.connectingBUTTON.TabIndex = 1;
             this.connectingBUTTON.Text = "MI CONNEGGIO";
             this.connectingBUTTON.UseVisualStyleBackColor = true;
-            this.connectingBUTTON.Click += new System.EventHandler(this.button2_Click);
+            this.connectingBUTTON.Click += new System.EventHandler(this.connectingBUTTON_Click);
             // 
             // serverIP
             // 
@@ -117,17 +118,26 @@
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
+            // Host
+            // 
+            this.Host.Location = new System.Drawing.Point(346, 12);
+            this.Host.Name = "Host";
+            this.Host.Size = new System.Drawing.Size(143, 20);
+            this.Host.TabIndex = 14;
+            this.Host.Text = "HOSTIO";
+            this.Host.UseVisualStyleBackColor = true;
+            this.Host.Click += new System.EventHandler(this.Host_Click);
+            // 
             // radioButton1
             // 
             this.radioButton1.AutoSize = true;
-            this.radioButton1.Checked = true;
             this.radioButton1.Location = new System.Drawing.Point(12, 478);
             this.radioButton1.Name = "radioButton1";
             this.radioButton1.Size = new System.Drawing.Size(47, 17);
             this.radioButton1.TabIndex = 13;
-            this.radioButton1.TabStop = true;
             this.radioButton1.Text = "Host";
             this.radioButton1.UseVisualStyleBackColor = true;
+            this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton_CheckedChanged);
             // 
             // radioButton2
             // 
@@ -136,7 +146,6 @@
             this.radioButton2.Name = "radioButton2";
             this.radioButton2.Size = new System.Drawing.Size(51, 17);
             this.radioButton2.TabIndex = 13;
-            this.radioButton2.TabStop = true;
             this.radioButton2.Text = "Client";
             this.radioButton2.UseVisualStyleBackColor = true;
             // 
@@ -146,6 +155,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(894, 508);
+            this.Controls.Add(this.Host);
             this.Controls.Add(this.connectingBUTTON);
             this.Controls.Add(this.serverIP);
             this.Controls.Add(this.radioButton2);
@@ -175,6 +185,7 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.Button Host;
         private System.Windows.Forms.RadioButton radioButton1;
         private System.Windows.Forms.RadioButton radioButton2;
     }
