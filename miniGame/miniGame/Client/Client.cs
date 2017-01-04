@@ -6,23 +6,15 @@ using System.Windows.Forms;
 
 namespace miniGame
 {
-    public class Client {
-        RichTextBox rtb;
-        Button pg;
-        Form1 f1;
+    public class Client : IClient {
+        IForm form1;
         Socket client;
         byte[] bytes_in = new byte[1024];
         string serverIP;
         int port;
-        public Client( Form1 f1
-                     , RichTextBox rtb
-                     , string serverIP
-                     , Button pg
-                     , int port ) {
-            this.rtb = rtb;
+        public Client(Form1 form1, string serverIP, int port ) {
             this.serverIP = serverIP;
-            this.pg = pg;
-            this.f1 = f1;
+            this.form1 = form1;
             this.port = port;
         }
 
@@ -37,11 +29,8 @@ namespace miniGame
                     , new AsyncCallback(OnConnect)
                     , null);
             } catch(Exception ex) {
-                if(!client.Connected) {
-                    MessageBox.Show("Can't connect");
-                    f1.setSendButtonStatus(false);
-                }
-                else { MessageBox.Show(ex.StackTrace); }
+                MessageBox.Show("Can't connect" + ex.StackTrace);
+                form1.setButtonStatus(new string[] { "sendBUTTON" }, new bool[] { false });
             }
         }
 
@@ -51,13 +40,12 @@ namespace miniGame
             if (client.Connected) {
                 MessageBox.Show("Connected");
                 client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive), client);
-                f1.setSendButtonStatus(true);
-            }
-            else {
+                form1.setButtonStatus( new string[] { "sendBUTTON" }
+                                     , new bool[] { true });
+            } else {
                 MessageBox.Show("Not Connected");
-                f1.setSendButtonStatus(false);
-                f1.setHostButtonStatus(true);
-                f1.setClientButtonText("MI CONNEGGIO");
+                form1.setButtonStatus( new string[] { "sendBUTTON", "hostBUTTON" }
+                                     , new bool[] { false, true });
             }
         }
 
@@ -66,12 +54,12 @@ namespace miniGame
             try {
                 client.EndReceive(ar);
                 client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive), client);
-                string message = Encoding.ASCII.GetString(bytes_in);
-                f1.Chat(message);
+                form1.Chat(Encoding.ASCII.GetString(bytes_in));
             } catch(Exception ex) {
                 if (!client.Connected) {
                     client.Close();
-                    f1.setSendButtonStatus(false);
+                    form1.setButtonStatus( new string[] { "sendBUTTON" }
+                                         , new bool[] { false });
                     MessageBox.Show("Server has closed the connection");
                 } else {
                     MessageBox.Show(ex.StackTrace);
