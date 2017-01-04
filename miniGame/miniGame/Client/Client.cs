@@ -23,7 +23,6 @@ namespace miniGame
         public void connect() {
             try {
                 client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
                 client.BeginConnect(
                       new IPEndPoint(IPAddress.Parse(serverIP), port)
                     , new AsyncCallback(OnConnect)
