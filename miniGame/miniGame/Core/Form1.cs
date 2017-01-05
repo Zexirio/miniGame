@@ -19,15 +19,13 @@ namespace miniGame {
         }
 
         /******** Sono metodi richiamati dalle classi server/client per rilasciare modifiche ai controlli ********/
-        public void setClientButtonText(string Text) {
-            if (Utils.ControlInvokeRequired(connectingBUTTON, () => connectingBUTTON.Text = Text)) return;
-            connectingBUTTON.Text = Text;
-        }
-
         public void Chat(string msg) {
             if (Utils.ControlInvokeRequired(richTextBox1, () => Chat(msg))) return;
             richTextBox1.AppendText(msg);
             richTextBox1.AppendText("\n");
+            //autoscroll to the end
+            richTextBox1.SelectionStart = richTextBox1.Text.Length;
+            richTextBox1.ScrollToCaret();
         }
 
         public void setButtonStatus(string[] controlNames, bool[] status) {
@@ -134,16 +132,13 @@ namespace miniGame {
 
         private void sendBUTTON_Click(object sender, EventArgs e) {
             if (isHost) {
-                Socket cliente = myServer.getClient();
                 Chat("Host: " + MessageToSend.Text);
                 byte[] bytes = Encoding.ASCII.GetBytes("Host: " + MessageToSend.Text);
-                cliente.Send(bytes, bytes.Length, SocketFlags.None);
-                MessageToSend.Clear();
+                myServer.getClient().Send(bytes, bytes.Length, SocketFlags.None);
             } else {
-                Socket cliente = myClient.getClient();
                 Chat("Client: " + MessageToSend.Text);
                 byte[] bytes = Encoding.ASCII.GetBytes("Client: " + MessageToSend.Text);
-                cliente.Send(bytes, bytes.Length, SocketFlags.None);
+                myClient.getClient().Send(bytes, bytes.Length, SocketFlags.None);
             }
             MessageToSend.Clear();
         }
@@ -171,7 +166,7 @@ namespace miniGame {
 
         private void closeServer() {
             if(myServer.getServer() != null) {
-               if(myServer.getClient()!=null) myServer.getClient().Close();
+               if(myServer.getClient()!=null) { myServer.getClient().Close(); }
                 myServer.getServer().Close();
             }
         }
