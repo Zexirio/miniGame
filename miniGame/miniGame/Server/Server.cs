@@ -50,15 +50,13 @@ namespace miniGame
                 client.EndReceive(ar);
                 client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive_Server), client);
                 string message = Encoding.ASCII.GetString(bytes_in);
-                /*string[] msp = message.Split(Convert.ToChar("|"));
-                message = msp[1];
-                message = message.Substring(0, Convert.ToInt32(msp[0])+6);*/
                 if (message.Contains("mov"))
                 {
                     string[] xy = message.Split(',');
                     Move(Convert.ToInt32(xy[1]), Convert.ToInt32(xy[2]));
                 }
                 form1.Chat(message);
+                Array.Clear(bytes_in, 0, bytes_in.Length);
             }
             catch (Exception ex)
             {

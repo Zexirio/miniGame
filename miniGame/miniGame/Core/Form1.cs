@@ -176,8 +176,8 @@ namespace miniGame
             string whoIsThis;
             if (isHost)
             {
+               
                 whoIsThis = "Host: ";
-                //byte[] bytes = Encoding.ASCII.GetBytes(MessageToSend.TextLength + "|" + whoIsThis + MessageToSend.Text);
                 byte[] bytes = Encoding.ASCII.GetBytes(whoIsThis + MessageToSend.Text);
                 myServer.getClient().Send(bytes, bytes.Length, SocketFlags.None);
             }

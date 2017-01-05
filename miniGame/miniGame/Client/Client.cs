@@ -70,6 +70,7 @@ namespace miniGame
                 client.EndReceive(ar);
                 client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive), client);
                 form1.Chat(Encoding.ASCII.GetString(bytes_in));
+                Array.Clear(bytes_in, 0, bytes_in.Length);
             }
             catch (Exception ex)
             {
