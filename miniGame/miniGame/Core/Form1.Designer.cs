@@ -88,10 +88,10 @@
             this.MessageToSend.TabIndex = 9;
             this.MessageToSend.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MessageToSend_KeyDown);
             // 
-            // button2
+            // sendBUTTON
             // 
             this.sendBUTTON.Location = new System.Drawing.Point(630, 252);
-            this.sendBUTTON.Name = "button2";
+            this.sendBUTTON.Name = "sendBUTTON";
             this.sendBUTTON.Size = new System.Drawing.Size(251, 23);
             this.sendBUTTON.TabIndex = 10;
             this.sendBUTTON.Text = "SEND";
@@ -105,6 +105,7 @@
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.Size = new System.Drawing.Size(251, 181);
             this.richTextBox1.TabIndex = 11;
+            this.richTextBox1.TabStop = false;
             this.richTextBox1.Text = "";
             // 
             // checkBox1
@@ -118,10 +119,10 @@
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
-            // Host
+            // hostingBUTTON
             // 
             this.hostingBUTTON.Location = new System.Drawing.Point(346, 12);
-            this.hostingBUTTON.Name = "Host";
+            this.hostingBUTTON.Name = "hostingBUTTON";
             this.hostingBUTTON.Size = new System.Drawing.Size(143, 20);
             this.hostingBUTTON.TabIndex = 14;
             this.hostingBUTTON.Text = "HOSTIO";
