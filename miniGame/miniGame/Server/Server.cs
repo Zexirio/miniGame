@@ -63,9 +63,19 @@ namespace miniGame
                 if (!client.Connected)
                 {
                     client.Close();
+
+                    //***********//
+                    server.Close();
+                    //**********//
+
                     form1.setButtonStatus(new string[] { "sendBUTTON" }
                                          , new bool[] { false });
                     MessageBox.Show("Client disconnected from session");
+
+                    //*****************//
+                    form1.startServer();
+                    //****************//
+
                     form1.changeLabel(false);
                 }
                 else

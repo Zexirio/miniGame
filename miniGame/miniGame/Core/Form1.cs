@@ -198,7 +198,7 @@ namespace miniGame
 
         private void radioButton_CheckedChanged(object sender, EventArgs e) { }
 
-        private void startServer()
+        public void startServer()
         {
             if (myServer != null && myServer.getClient() != null) { closeServer(); }
             isHost = true;
