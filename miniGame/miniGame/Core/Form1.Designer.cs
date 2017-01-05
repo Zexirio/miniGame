@@ -39,6 +39,7 @@
             this.hostingBUTTON = new System.Windows.Forms.Button();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // pg
@@ -150,12 +151,23 @@
             this.radioButton2.Text = "Client";
             this.radioButton2.UseVisualStyleBackColor = true;
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.ForeColor = System.Drawing.Color.Red;
+            this.label1.Location = new System.Drawing.Point(227, 16);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(79, 13);
+            this.label1.TabIndex = 15;
+            this.label1.Text = "Not Connected";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(894, 508);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.hostingBUTTON);
             this.Controls.Add(this.connectingBUTTON);
             this.Controls.Add(this.serverIP);
@@ -189,6 +201,7 @@
         private System.Windows.Forms.Button hostingBUTTON;
         private System.Windows.Forms.RadioButton radioButton1;
         private System.Windows.Forms.RadioButton radioButton2;
+        private System.Windows.Forms.Label label1;
     }
 }
 

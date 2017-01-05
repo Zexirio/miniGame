@@ -13,11 +13,13 @@ namespace miniGame
         byte[] bytes_in = new byte[1024];
         string serverIP;
         int port;
-        public Client(Form1 form1, string serverIP, int port)
+        Label label1;
+        public Client(Form1 form1, string serverIP, int port, Label label1)
         {
             this.serverIP = serverIP;
             this.form1 = form1;
             this.port = port;
+            this.label1 = label1;
         }
 
         public Socket getClient() { return client; }
@@ -49,12 +51,14 @@ namespace miniGame
                 client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive), client);
                 form1.setButtonStatus(new string[] { "sendBUTTON" }
                                      , new bool[] { true });
+                form1.changeLabel(true);
             }
             else
             {
                 MessageBox.Show("Not Connected");
                 form1.setButtonStatus(new string[] { "sendBUTTON", "hostBUTTON" }
                                      , new bool[] { false, true });
+                form1.changeLabel(false);
             }
         }
 
@@ -75,6 +79,7 @@ namespace miniGame
                     form1.setButtonStatus(new string[] { "sendBUTTON" }
                                          , new bool[] { false });
                     MessageBox.Show("Server has closed the connection");
+                    form1.changeLabel(false);
                 }
                 else
                 {

@@ -34,6 +34,7 @@ namespace miniGame
                 client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive_Server), client);
                 form1.setButtonStatus(new string[] { "sendBUTTON" }
                                      , new bool[] { true });
+                form1.changeLabel(true);
             }
             catch (Exception ex)
             {
@@ -49,6 +50,9 @@ namespace miniGame
                 client.EndReceive(ar);
                 client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive_Server), client);
                 string message = Encoding.ASCII.GetString(bytes_in);
+                /*string[] msp = message.Split(Convert.ToChar("|"));
+                message = msp[1];
+                message = message.Substring(0, Convert.ToInt32(msp[0])+6);*/
                 if (message.Contains("mov"))
                 {
                     string[] xy = message.Split(',');
@@ -64,6 +68,7 @@ namespace miniGame
                     form1.setButtonStatus(new string[] { "sendBUTTON" }
                                          , new bool[] { false });
                     MessageBox.Show("Client disconnected from session");
+                    form1.changeLabel(false);
                 }
                 else
                 {

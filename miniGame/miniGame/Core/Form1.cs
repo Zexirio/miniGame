@@ -69,6 +69,20 @@ namespace miniGame
                 }
             }
         }
+
+        public void changeLabel(bool status) {
+            if(status)
+            {
+                Utils.ControlInvokeRequired(label1, () => label1.Text = "Connected");
+                Utils.ControlInvokeRequired(label1, () => label1.ForeColor = System.Drawing.Color.Green);
+            }
+            else
+            {
+                Utils.ControlInvokeRequired(label1, () => label1.Text = "Not connected");
+                Utils.ControlInvokeRequired(label1, () => label1.ForeColor = System.Drawing.Color.Red);
+            }
+            
+        }
         /***********************************************************************************************************/
 
 
@@ -109,14 +123,14 @@ namespace miniGame
         {
             if (connectingBUTTON.Text.Equals("MI CONNEGGIO"))
             {
-                DialogResult dialogResult = MessageBox.Show("Vuoi avvià la connessione?", "-", MessageBoxButtons.YesNo);
-                if (dialogResult == DialogResult.Yes)
-                {
+                //DialogResult dialogResult = MessageBox.Show("Vuoi avvià la connessione?", "-", MessageBoxButtons.YesNo);
+                //if (dialogResult == DialogResult.Yes)
+                //{
                     connectingBUTTON.Text = "CHIUDO";
                     isHost = false;
                     startClient();
                     hostingBUTTON.Enabled = false;
-                }
+                //}
             }
             else if (connectingBUTTON.Text.Equals("CHIUDO"))
             {
@@ -137,15 +151,15 @@ namespace miniGame
             }
             else if (hostingBUTTON.Text.Equals("HOSTIO"))
             {
-                DialogResult dialogResult = MessageBox.Show("Vuoi avvià il server?", "-", MessageBoxButtons.YesNo);
-                if (dialogResult == DialogResult.Yes)
-                {
+                //DialogResult dialogResult = MessageBox.Show("Vuoi avvià il server?", "-", MessageBoxButtons.YesNo);
+                //if (dialogResult == DialogResult.Yes)
+                //{
                     hostingBUTTON.Text = "ECCHIUDI";
                     isHost = true;
                     if (myClient != null) { closeClient(); }
                     startServer();
                     connectingBUTTON.Enabled = false;
-                }
+                //
             }
             else
             { /*boh non dovrebbe entrare qua dentro*/
@@ -159,18 +173,21 @@ namespace miniGame
 
         private void sendBUTTON_Click(object sender, EventArgs e)
         {
+            string whoIsThis;
             if (isHost)
             {
-                Chat("Host: " + MessageToSend.Text);
-                byte[] bytes = Encoding.ASCII.GetBytes("Host: " + MessageToSend.Text);
+                whoIsThis = "Host: ";
+                //byte[] bytes = Encoding.ASCII.GetBytes(MessageToSend.TextLength + "|" + whoIsThis + MessageToSend.Text);
+                byte[] bytes = Encoding.ASCII.GetBytes(whoIsThis + MessageToSend.Text);
                 myServer.getClient().Send(bytes, bytes.Length, SocketFlags.None);
             }
             else
             {
-                Chat("Client: " + MessageToSend.Text);
-                byte[] bytes = Encoding.ASCII.GetBytes("Client: " + MessageToSend.Text);
+                whoIsThis = "Client: ";
+                byte[] bytes = Encoding.ASCII.GetBytes(whoIsThis + MessageToSend.Text);
                 myClient.getClient().Send(bytes, bytes.Length, SocketFlags.None);
             }
+            Chat(whoIsThis + MessageToSend.Text);
             MessageToSend.Clear();
         }
 
@@ -193,7 +210,7 @@ namespace miniGame
         {
             if (myClient != null && myClient.getClient() != null) { closeClient(); }
             connectingBUTTON.Enabled = true;
-            myClient = new Client(this, serverIP.Text, 9999);
+            myClient = new Client(this, serverIP.Text, 9999, label1);
             isHost = false;
             myClient.connect();
         }
