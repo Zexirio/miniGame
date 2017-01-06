@@ -39,7 +39,7 @@ namespace miniGame {
 
         private void OnConnect(IAsyncResult ar) {
             if (client.Connected) {
-                MessageBox.Show("Connected");
+                //MessageBox.Show("Connected");
                 client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive), client);
                 form1.setButtonStatus(new string[] { "sendBUTTON" }
                                      , new bool[] { true });
@@ -64,7 +64,7 @@ namespace miniGame {
                     client.Close();
                     form1.setButtonStatus(new string[] { "sendBUTTON" }
                                          , new bool[] { false });
-                    MessageBox.Show("Server has closed the connection");
+                    //MessageBox.Show("Server has closed the connection");
                     form1.changeLabel(false);
                 } else {
                     MessageBox.Show(ex.StackTrace);

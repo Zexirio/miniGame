@@ -57,7 +57,7 @@ namespace miniGame {
                     client.Close();
                     form1.setButtonStatus(new string[] { "sendBUTTON" }
                                          , new bool[] { false });
-                    MessageBox.Show("Client disconnected from session");
+                    //MessageBox.Show("Client disconnected from session");
 
                     server.Close();
                     instantiateServer();

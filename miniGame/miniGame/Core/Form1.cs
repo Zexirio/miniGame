@@ -8,7 +8,7 @@ namespace miniGame {
         bool isHost;
         byte[] bytes_in = new byte[1024];
         byte[] bytes_out = new byte[1024];
-        Encoding encoding = Encoding.GetEncoding("iso-8859-1");
+        Encoding enc = Encoding.GetEncoding("iso-8859-1");
         IServer myServer;
         IClient myClient;
 
@@ -40,8 +40,8 @@ namespace miniGame {
                         case "sendBUTTON":
                             if (Utils.ControlInvokeRequired(sendBUTTON, () => sendBUTTON.Enabled = status[i])) return;
                             if (!status[i]) {
-                                if (Utils.ControlInvokeRequired(sendBUTTON, () => sendBUTTON.Text = "MI CONNEGGIO")) return;
-                                sendBUTTON.Text = "MI CONNEGGIO";
+                                if (Utils.ControlInvokeRequired(sendBUTTON, () => sendBUTTON.Text = "CONNECT")) return;
+                                sendBUTTON.Text = "CONNECT";
                             }
                             sendBUTTON.Enabled = status[i];
                             break;
@@ -104,24 +104,24 @@ namespace miniGame {
         }
 
         private void connectingBUTTON_Click(object sender, EventArgs e) {
-            if (connectingBUTTON.Text.Equals("MI CONNEGGIO")) {
+            if (connectingBUTTON.Text.Equals("CONNECT")) {
                 //DialogResult dialogResult = MessageBox.Show("Vuoi avvià la connessione?", "-", MessageBoxButtons.YesNo);
                 //if (dialogResult == DialogResult.Yes)
                 //{
-                connectingBUTTON.Text = "CHIUDO";
+                connectingBUTTON.Text = "DISCONNECT";
                 isHost = false;
                 startClient();
                 hostingBUTTON.Enabled = false;
                 //}
-            } else if (connectingBUTTON.Text.Equals("CHIUDO")) {
-                connectingBUTTON.Text = "MI CONNEGGIO";
+            } else if (connectingBUTTON.Text.Equals("DISCONNECT")) {
+                connectingBUTTON.Text = "CONNECT";
                 hostingBUTTON.Enabled = true;
                 closeClient();
             }
         }
 
         private void HostingBUTTON_Click(object sender, EventArgs e) {
-            if (hostingBUTTON.Text.Equals("ECCHIUDI")) {
+           /* if (hostingBUTTON.Text.Equals("ECCHIUDI")) {
                 hostingBUTTON.Text = "HOSTIO";
                 connectingBUTTON.Enabled = true;
                 closeServer();
@@ -136,8 +136,8 @@ namespace miniGame {
                 startServer();
                 connectingBUTTON.Enabled = false;
                 //
-            } else { /*boh non dovrebbe entrare qua dentro*/
-            }
+            } else { // boh non dovrebbe entrare qua dentro
+            } */
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e) {
@@ -151,12 +151,12 @@ namespace miniGame {
 
                 whoIsThis = "Host: ";
                 msgReady = whoIsThis + MessageToSend.Text;
-                byte[] bytes = encoding.GetBytes(msgReady);
+                byte[] bytes = enc.GetBytes(msgReady);
                 myServer.getClient().Send(bytes, bytes.Length, SocketFlags.None);
             } else {
                 whoIsThis = "Client: ";
                 msgReady = whoIsThis + MessageToSend.Text;
-                byte[] bytes = encoding.GetBytes(msgReady);
+                byte[] bytes = enc.GetBytes(msgReady);
                 myClient.getClient().Send(bytes, bytes.Length, SocketFlags.None);
             }
             Chat(whoIsThis + MessageToSend.Text);
@@ -195,5 +195,19 @@ namespace miniGame {
             if (myClient.getClient() != null) { myClient.getClient().Close(); }
         }
 
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox2.Checked) {
+                isHost = true;
+                if (myClient != null) { closeClient(); }
+                startServer();
+                connectingBUTTON.Enabled = false;
+            }
+            else {
+                connectingBUTTON.Enabled = true;
+                closeServer();
+                if (myClient != null) { closeClient(); }
+            }
+        }
     }
 }
