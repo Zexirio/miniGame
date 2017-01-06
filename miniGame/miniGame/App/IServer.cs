@@ -10,5 +10,6 @@ namespace miniGame {
         Socket getClient();
         Socket getServer();
         void Move(int x, int y);
+        void createServer();
     }
 }

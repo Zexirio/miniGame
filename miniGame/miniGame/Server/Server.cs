@@ -12,20 +12,22 @@ namespace miniGame {
         Socket server = default(Socket);
         Socket client = default(Socket);
         byte[] bytes_in = new byte[1024];
-        Encoding enc = Encoding.GetEncoding("iso-8859-1");
 
         public Server(Form1 form1, Button pg) {
             this.form1 = form1;
             this.pg = pg;
-            instantiateServer();
-        }
-
-        private void instantiateServer() {
+            //createServer();
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
             server.Bind(new IPEndPoint(IPAddress.Any, 9999));
             server.Listen(2);
             server.BeginAccept(new AsyncCallback(OnAccept_Server), null);
+
+        }
+
+        public void createServer() {
+            server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
         }
 
         private void OnAccept_Server(IAsyncResult ar) {
@@ -45,7 +47,7 @@ namespace miniGame {
             try {
                 client.EndReceive(ar);
                 client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive_Server), client);
-                string message = enc.GetString(bytes_in);
+                string message = Encoding.GetEncoding("iso-8859-1").GetString(bytes_in);
                 if (message.Contains("mov")) {
                     string[] xy = message.Split(',');
                     Move(Convert.ToInt32(xy[1]), Convert.ToInt32(xy[2]));
@@ -55,12 +57,9 @@ namespace miniGame {
             } catch (Exception ex) {
                 if (!client.Connected) {
                     client.Close();
-                    form1.setButtonStatus(new string[] { "sendBUTTON" }
+                    form1.setButtonStatus( new string[] { "sendBUTTON" }
                                          , new bool[] { false });
-                    //MessageBox.Show("Client disconnected from session");
-
                     server.Close();
-                    instantiateServer();
                     form1.changeLabel(false);
                 } else {
                     MessageBox.Show(ex.StackTrace);

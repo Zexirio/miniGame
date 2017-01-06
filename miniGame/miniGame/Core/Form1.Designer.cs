@@ -35,7 +35,6 @@
             this.sendBUTTON = new System.Windows.Forms.Button();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.hostingBUTTON = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.serverIP = new System.Windows.Forms.ComboBox();
@@ -59,9 +58,9 @@
             this.connectingBUTTON.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.connectingBUTTON.Font = new System.Drawing.Font("Trebuchet MS", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.connectingBUTTON.ForeColor = System.Drawing.Color.LightSkyBlue;
-            this.connectingBUTTON.Location = new System.Drawing.Point(396, 10);
+            this.connectingBUTTON.Location = new System.Drawing.Point(281, 10);
             this.connectingBUTTON.Name = "connectingBUTTON";
-            this.connectingBUTTON.Size = new System.Drawing.Size(194, 21);
+            this.connectingBUTTON.Size = new System.Drawing.Size(309, 21);
             this.connectingBUTTON.TabIndex = 1;
             this.connectingBUTTON.Text = "CONNECT";
             this.connectingBUTTON.UseVisualStyleBackColor = false;
@@ -124,23 +123,11 @@
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
-            // hostingBUTTON
-            // 
-            this.hostingBUTTON.Enabled = false;
-            this.hostingBUTTON.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.hostingBUTTON.Location = new System.Drawing.Point(163, 10);
-            this.hostingBUTTON.Name = "hostingBUTTON";
-            this.hostingBUTTON.Size = new System.Drawing.Size(227, 21);
-            this.hostingBUTTON.TabIndex = 14;
-            this.hostingBUTTON.Text = "HOST (out of order)";
-            this.hostingBUTTON.UseVisualStyleBackColor = true;
-            this.hostingBUTTON.Click += new System.EventHandler(this.HostingBUTTON_Click);
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.ForeColor = System.Drawing.Color.Red;
-            this.label1.Location = new System.Drawing.Point(69, 15);
+            this.label1.Location = new System.Drawing.Point(127, 15);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(79, 13);
             this.label1.TabIndex = 15;
@@ -181,7 +168,6 @@
             this.Controls.Add(this.serverIP);
             this.Controls.Add(this.checkBox2);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.hostingBUTTON);
             this.Controls.Add(this.connectingBUTTON);
             this.Controls.Add(this.serverPORT);
             this.Controls.Add(this.checkBox1);
@@ -208,7 +194,6 @@
         private System.Windows.Forms.Button sendBUTTON;
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.CheckBox checkBox1;
-        private System.Windows.Forms.Button hostingBUTTON;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox checkBox2;
         private System.Windows.Forms.ComboBox serverIP;

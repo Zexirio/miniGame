@@ -8,7 +8,6 @@ namespace miniGame {
         bool isHost;
         byte[] bytes_in = new byte[1024];
         byte[] bytes_out = new byte[1024];
-        Encoding enc = Encoding.GetEncoding("iso-8859-1");
         IServer myServer;
         IClient myClient;
 
@@ -39,19 +38,14 @@ namespace miniGame {
                     switch (controlNames[i]) {
                         case "sendBUTTON":
                             if (Utils.ControlInvokeRequired(sendBUTTON, () => sendBUTTON.Enabled = status[i])) return;
-                            if (!status[i]) {
-                                if (Utils.ControlInvokeRequired(sendBUTTON, () => sendBUTTON.Text = "CONNECT")) return;
-                                sendBUTTON.Text = "CONNECT";
-                            }
                             sendBUTTON.Enabled = status[i];
                             break;
-                        case "hostBUTTON":
-                            if (Utils.ControlInvokeRequired(hostingBUTTON, () => hostingBUTTON.Enabled = status[i])) return;
-                            hostingBUTTON.Enabled = status[i];
-                            break;
                         case "connectingBUTTON":
-                            if (Utils.ControlInvokeRequired(connectingBUTTON, () => connectingBUTTON.Text = Text)) return;
-                            connectingBUTTON.Text = Text;
+                            if(!status[i]) {
+                                if(myClient != null) { closeClient(); }
+                                if (Utils.ControlInvokeRequired(connectingBUTTON, () => connectingBUTTON.Text = "CONNECT")) return;
+                                connectingBUTTON.Text = "CONNECT";
+                            }
                             break;
                         default:
                             throw new Exception("Control" + controlNames[i] + "not exist!");
@@ -105,39 +99,13 @@ namespace miniGame {
 
         private void connectingBUTTON_Click(object sender, EventArgs e) {
             if (connectingBUTTON.Text.Equals("CONNECT")) {
-                //DialogResult dialogResult = MessageBox.Show("Vuoi avvià la connessione?", "-", MessageBoxButtons.YesNo);
-                //if (dialogResult == DialogResult.Yes)
-                //{
                 connectingBUTTON.Text = "DISCONNECT";
                 isHost = false;
                 startClient();
-                hostingBUTTON.Enabled = false;
-                //}
             } else if (connectingBUTTON.Text.Equals("DISCONNECT")) {
                 connectingBUTTON.Text = "CONNECT";
-                hostingBUTTON.Enabled = true;
                 closeClient();
             }
-        }
-
-        private void HostingBUTTON_Click(object sender, EventArgs e) {
-           /* if (hostingBUTTON.Text.Equals("ECCHIUDI")) {
-                hostingBUTTON.Text = "HOSTIO";
-                connectingBUTTON.Enabled = true;
-                closeServer();
-                if (myClient != null) { closeClient(); }
-            } else if (hostingBUTTON.Text.Equals("HOSTIO")) {
-                //DialogResult dialogResult = MessageBox.Show("Vuoi avvià il server?", "-", MessageBoxButtons.YesNo);
-                //if (dialogResult == DialogResult.Yes)
-                //{
-                hostingBUTTON.Text = "ECCHIUDI";
-                isHost = true;
-                if (myClient != null) { closeClient(); }
-                startServer();
-                connectingBUTTON.Enabled = false;
-                //
-            } else { // boh non dovrebbe entrare qua dentro
-            } */
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e) {
@@ -145,21 +113,18 @@ namespace miniGame {
         }
 
         private void sendBUTTON_Click(object sender, EventArgs e) {
-            string whoIsThis;
-            string msgReady;
+            Encoding enc = Encoding.GetEncoding("iso-8859-1");
+            string msgToSend;
             if (isHost) {
-
-                whoIsThis = "Host: ";
-                msgReady = whoIsThis + MessageToSend.Text;
-                byte[] bytes = enc.GetBytes(msgReady);
+                msgToSend = "Host: " + MessageToSend.Text;
+                byte[] bytes = enc.GetBytes(msgToSend);
                 myServer.getClient().Send(bytes, bytes.Length, SocketFlags.None);
             } else {
-                whoIsThis = "Client: ";
-                msgReady = whoIsThis + MessageToSend.Text;
-                byte[] bytes = enc.GetBytes(msgReady);
+                msgToSend = "Client: " + MessageToSend.Text;
+                byte[] bytes = enc.GetBytes(msgToSend);
                 myClient.getClient().Send(bytes, bytes.Length, SocketFlags.None);
             }
-            Chat(whoIsThis + MessageToSend.Text);
+            Chat(msgToSend);
             MessageToSend.Clear();
         }
 
@@ -179,7 +144,7 @@ namespace miniGame {
         private void startClient() {
             if (myClient != null && myClient.getClient() != null) { closeClient(); }
             connectingBUTTON.Enabled = true;
-            myClient = new Client(this, serverIP.Text, 9999, label1);
+            myClient = new Client(this, serverIP.Text, 9999);
             isHost = false;
             myClient.connect();
         }
@@ -207,6 +172,7 @@ namespace miniGame {
                 connectingBUTTON.Enabled = true;
                 closeServer();
                 if (myClient != null) { closeClient(); }
+                myServer.createServer();
             }
         }
     }

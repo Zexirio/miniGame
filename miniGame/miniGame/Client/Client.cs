@@ -9,15 +9,12 @@ namespace miniGame {
         IForm form1;
         Socket client;
         byte[] bytes_in = new byte[1024];
-        Encoding enc = Encoding.GetEncoding("iso-8859-1");
         string serverIP;
         int port;
-        Label label1;
-        public Client(Form1 form1, string serverIP, int port, Label label1) {
+        public Client(Form1 form1, string serverIP, int port) {
             this.serverIP = serverIP;
             this.form1 = form1;
             this.port = port;
-            this.label1 = label1;
         }
 
         public Socket getClient() { return client; }
@@ -39,15 +36,13 @@ namespace miniGame {
 
         private void OnConnect(IAsyncResult ar) {
             if (client.Connected) {
-                //MessageBox.Show("Connected");
                 client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive), client);
-                form1.setButtonStatus(new string[] { "sendBUTTON" }
+               form1.setButtonStatus(new string[] { "sendBUTTON" }
                                      , new bool[] { true });
                 form1.changeLabel(true);
             } else {
-                MessageBox.Show("Not Connected");
-                form1.setButtonStatus(new string[] { "sendBUTTON", "hostBUTTON" }
-                                     , new bool[] { false, true });
+               // MessageBox.Show("Not Connected");
+                form1.setButtonStatus( new string[] { "connectingBUTTON"}, new bool[] { false});
                 form1.changeLabel(false);
             }
         }
@@ -57,14 +52,12 @@ namespace miniGame {
             try {
                 client.EndReceive(ar);
                 client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive), client);
-                form1.Chat(enc.GetString(bytes_in));
+                form1.Chat(Encoding.GetEncoding("iso-8859-1").GetString(bytes_in));
                 Array.Clear(bytes_in, 0, bytes_in.Length);
             } catch (Exception ex) {
                 if (!client.Connected) {
                     client.Close();
-                    form1.setButtonStatus(new string[] { "sendBUTTON" }
-                                         , new bool[] { false });
-                    //MessageBox.Show("Server has closed the connection");
+                    form1.setButtonStatus(new string[] { "sendBUTTON" }, new bool[] { false });
                     form1.changeLabel(false);
                 } else {
                     MessageBox.Show(ex.StackTrace);
