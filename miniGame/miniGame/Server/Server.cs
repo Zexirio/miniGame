@@ -12,6 +12,7 @@ namespace miniGame {
         Socket server = default(Socket);
         Socket client = default(Socket);
         byte[] bytes_in = new byte[1024];
+        Encoding enc = Encoding.GetEncoding("iso-8859-1");
 
         public Server(Form1 form1, Button pg) {
             this.form1 = form1;
@@ -44,7 +45,7 @@ namespace miniGame {
             try {
                 client.EndReceive(ar);
                 client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive_Server), client);
-                string message = Encoding.ASCII.GetString(bytes_in);
+                string message = enc.GetString(bytes_in);
                 if (message.Contains("mov")) {
                     string[] xy = message.Split(',');
                     Move(Convert.ToInt32(xy[1]), Convert.ToInt32(xy[2]));

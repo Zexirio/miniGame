@@ -8,6 +8,7 @@ namespace miniGame {
         bool isHost;
         byte[] bytes_in = new byte[1024];
         byte[] bytes_out = new byte[1024];
+        Encoding encoding = Encoding.GetEncoding("iso-8859-1");
         IServer myServer;
         IClient myClient;
 
@@ -145,14 +146,17 @@ namespace miniGame {
 
         private void sendBUTTON_Click(object sender, EventArgs e) {
             string whoIsThis;
+            string msgReady;
             if (isHost) {
 
                 whoIsThis = "Host: ";
-                byte[] bytes = Encoding.ASCII.GetBytes(whoIsThis + MessageToSend.Text);
+                msgReady = whoIsThis + MessageToSend.Text;
+                byte[] bytes = encoding.GetBytes(msgReady);
                 myServer.getClient().Send(bytes, bytes.Length, SocketFlags.None);
             } else {
                 whoIsThis = "Client: ";
-                byte[] bytes = Encoding.ASCII.GetBytes(whoIsThis + MessageToSend.Text);
+                msgReady = whoIsThis + MessageToSend.Text;
+                byte[] bytes = encoding.GetBytes(msgReady);
                 myClient.getClient().Send(bytes, bytes.Length, SocketFlags.None);
             }
             Chat(whoIsThis + MessageToSend.Text);

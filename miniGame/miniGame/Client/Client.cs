@@ -9,6 +9,7 @@ namespace miniGame {
         IForm form1;
         Socket client;
         byte[] bytes_in = new byte[1024];
+        Encoding enc = Encoding.GetEncoding("iso-8859-1");
         string serverIP;
         int port;
         Label label1;
@@ -56,7 +57,7 @@ namespace miniGame {
             try {
                 client.EndReceive(ar);
                 client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive), client);
-                form1.Chat(Encoding.ASCII.GetString(bytes_in));
+                form1.Chat(enc.GetString(bytes_in));
                 Array.Clear(bytes_in, 0, bytes_in.Length);
             } catch (Exception ex) {
                 if (!client.Connected) {
