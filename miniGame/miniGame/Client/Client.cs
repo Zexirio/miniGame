@@ -58,6 +58,7 @@ namespace miniGame {
                 if (!client.Connected) {
                     client.Close();
                     form1.setButtonStatus(new string[] { "sendBUTTON" }, new bool[] { false });
+                    form1.setButtonStatus(new string[] { "connectingBUTTON" }, new bool[] { false });
                     form1.changeLabel(false);
                 } else {
                     MessageBox.Show(ex.StackTrace);

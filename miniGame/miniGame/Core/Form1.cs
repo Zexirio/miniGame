@@ -8,6 +8,7 @@ namespace miniGame {
         bool isHost;
         byte[] bytes_in = new byte[1024];
         byte[] bytes_out = new byte[1024];
+        Encoding enc = Encoding.GetEncoding("iso-8859-1");
         IServer myServer;
         IClient myClient;
 
@@ -101,6 +102,8 @@ namespace miniGame {
             if (connectingBUTTON.Text.Equals("CONNECT")) {
                 connectingBUTTON.Text = "DISCONNECT";
                 isHost = false;
+                label1.Text = "Searching..";
+                label1.ForeColor = System.Drawing.Color.Blue;
                 startClient();
             } else if (connectingBUTTON.Text.Equals("DISCONNECT")) {
                 connectingBUTTON.Text = "CONNECT";
@@ -113,7 +116,6 @@ namespace miniGame {
         }
 
         private void sendBUTTON_Click(object sender, EventArgs e) {
-            Encoding enc = Encoding.GetEncoding("iso-8859-1");
             string msgToSend;
             if (isHost) {
                 msgToSend = "Host: " + MessageToSend.Text;
