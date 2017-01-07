@@ -35,7 +35,7 @@
             this.sendBUTTON = new System.Windows.Forms.Button();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.connectionStatusLABEL = new System.Windows.Forms.Label();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.serverIP = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
@@ -125,13 +125,13 @@
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.ForeColor = System.Drawing.Color.Red;
-            this.label1.Location = new System.Drawing.Point(12, 39);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(78, 13);
-            this.label1.TabIndex = 15;
-            this.label1.Text = "Not connected";
+            this.connectionStatusLABEL.AutoSize = true;
+            this.connectionStatusLABEL.ForeColor = System.Drawing.Color.Red;
+            this.connectionStatusLABEL.Location = new System.Drawing.Point(12, 39);
+            this.connectionStatusLABEL.Name = "label1";
+            this.connectionStatusLABEL.Size = new System.Drawing.Size(78, 13);
+            this.connectionStatusLABEL.TabIndex = 15;
+            this.connectionStatusLABEL.Text = "Not connected";
             // 
             // checkBox2
             // 
@@ -167,7 +167,7 @@
             this.ClientSize = new System.Drawing.Size(602, 397);
             this.Controls.Add(this.serverIP);
             this.Controls.Add(this.checkBox2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.connectionStatusLABEL);
             this.Controls.Add(this.connectingBUTTON);
             this.Controls.Add(this.serverPORT);
             this.Controls.Add(this.checkBox1);
@@ -194,7 +194,7 @@
         private System.Windows.Forms.Button sendBUTTON;
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.CheckBox checkBox1;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label connectionStatusLABEL;
         private System.Windows.Forms.CheckBox checkBox2;
         private System.Windows.Forms.ComboBox serverIP;
     }

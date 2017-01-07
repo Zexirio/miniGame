@@ -34,9 +34,8 @@ namespace miniGame {
             try {
                 client = server.EndAccept(ar);
                 client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive_Server), client);
-                form1.setButtonStatus(new string[] { "sendBUTTON" }
-                                     , new bool[] { true });
-                form1.changeLabel(true);
+                form1.updateControl( new string[] { Constants.SENDBUTTON_NAME, Constants.CONNECTIONSTATUSLABEL_NAME }
+                                   , new bool[] { true, true });
             } catch (Exception ex) {
                 //fottesega
             }
@@ -47,7 +46,7 @@ namespace miniGame {
             try {
                 client.EndReceive(ar);
                 client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive_Server), client);
-                string message = Encoding.GetEncoding("iso-8859-1").GetString(bytes_in);
+                string message = Encoding.GetEncoding(Constants.ENCODINGFORMAT).GetString(bytes_in);
                 if (message.Contains("mov")) {
                     string[] xy = message.Split(',');
                     Move(Convert.ToInt32(xy[1]), Convert.ToInt32(xy[2]));
@@ -57,10 +56,9 @@ namespace miniGame {
             } catch (Exception ex) {
                 if (!client.Connected) {
                     client.Close();
-                    form1.setButtonStatus( new string[] { "sendBUTTON" }
-                                         , new bool[] { false });
+                    form1.updateControl( new string[] { Constants.SENDBUTTON_NAME, Constants.CONNECTIONSTATUSLABEL_NAME }
+                                       , new bool[] { false, false });
                     server.Close();
-                    form1.changeLabel(false);
                 } else {
                     MessageBox.Show(ex.StackTrace);
                 }

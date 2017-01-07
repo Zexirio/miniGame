@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App\Constants.cs" />
     <Compile Include="App\Utils.cs" />
     <Compile Include="Client\Client.cs" />
     <Compile Include="App\IClient.cs" />

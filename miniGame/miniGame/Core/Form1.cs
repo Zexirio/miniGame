@@ -8,7 +8,7 @@ namespace miniGame {
         bool isHost;
         byte[] bytes_in = new byte[1024];
         byte[] bytes_out = new byte[1024];
-        Encoding enc = Encoding.GetEncoding("iso-8859-1");
+        Encoding enc = Encoding.GetEncoding(Constants.ENCODINGFORMAT);
         IServer myServer;
         IClient myClient;
 
@@ -29,7 +29,7 @@ namespace miniGame {
             richTextBox1.ScrollToCaret();
         }
 
-        public void setButtonStatus(string[] controlNames, bool[] status) {
+        public void updateControl(string[] controlNames, bool[] status) {
             if (controlNames.Length != status.Length) {
                 throw new Exception("Impossible to set button status:\n"
                                    + "control to set: " + controlNames.Length
@@ -37,15 +37,22 @@ namespace miniGame {
             } else {
                 for (int i = 0; i < controlNames.Length; i++) {
                     switch (controlNames[i]) {
-                        case "sendBUTTON":
-                            if (Utils.ControlInvokeRequired(sendBUTTON, () => sendBUTTON.Enabled = status[i])) return;
-                            sendBUTTON.Enabled = status[i];
+                        case Constants.SENDBUTTON_NAME:
+                            Utils.ControlInvokeRequired(sendBUTTON, () => sendBUTTON.Enabled = status[i]);
                             break;
-                        case "connectingBUTTON":
+                        case Constants.CONNECTINGBUTTON_NAME:
                             if(!status[i]) {
                                 if(myClient != null) { closeClient(); }
-                                if (Utils.ControlInvokeRequired(connectingBUTTON, () => connectingBUTTON.Text = "CONNECT")) return;
-                                connectingBUTTON.Text = "CONNECT";
+                                Utils.ControlInvokeRequired(connectingBUTTON, () => connectingBUTTON.Text = Constants.CONNECTINGBUTTON_CONNECT);
+                            }
+                            break;
+                        case Constants.CONNECTIONSTATUSLABEL_NAME:
+                            if (status[i]) {
+                                Utils.ControlInvokeRequired(connectionStatusLABEL, () => connectionStatusLABEL.Text = Constants.CONNECTIONSTATUSLABEL_CONNECTED);
+                                Utils.ControlInvokeRequired(connectionStatusLABEL, () => connectionStatusLABEL.ForeColor = System.Drawing.Color.Green);
+                            } else {
+                                Utils.ControlInvokeRequired(connectionStatusLABEL, () => connectionStatusLABEL.Text = Constants.CONNECTIONSTATUSLABEL_NOTCONNECTED);
+                                Utils.ControlInvokeRequired(connectionStatusLABEL, () => connectionStatusLABEL.ForeColor = System.Drawing.Color.Red);
                             }
                             break;
                         default:
@@ -53,17 +60,6 @@ namespace miniGame {
                     }
                 }
             }
-        }
-
-        public void changeLabel(bool status) {
-            if (status) {
-                Utils.ControlInvokeRequired(label1, () => label1.Text = "Connected");
-                Utils.ControlInvokeRequired(label1, () => label1.ForeColor = System.Drawing.Color.Green);
-            } else {
-                Utils.ControlInvokeRequired(label1, () => label1.Text = "Not connected");
-                Utils.ControlInvokeRequired(label1, () => label1.ForeColor = System.Drawing.Color.Red);
-            }
-
         }
         /***********************************************************************************************************/
 
@@ -99,14 +95,14 @@ namespace miniGame {
         }
 
         private void connectingBUTTON_Click(object sender, EventArgs e) {
-            if (connectingBUTTON.Text.Equals("CONNECT")) {
-                connectingBUTTON.Text = "DISCONNECT";
+            if (connectingBUTTON.Text.Equals(Constants.CONNECTINGBUTTON_CONNECT)) {
+                connectingBUTTON.Text = Constants.CONNECTINGBUTTON_DISCONNECT;
                 isHost = false;
-                label1.Text = "Searching..";
-                label1.ForeColor = System.Drawing.Color.Blue;
+                connectionStatusLABEL.Text = Constants.CONNECTIONSTATUSLABEL_SEARCHING;
+                connectionStatusLABEL.ForeColor = System.Drawing.Color.Blue;
                 startClient();
-            } else if (connectingBUTTON.Text.Equals("DISCONNECT")) {
-                connectingBUTTON.Text = "CONNECT";
+            } else if (connectingBUTTON.Text.Equals(Constants.CONNECTINGBUTTON_DISCONNECT)) {
+                connectingBUTTON.Text = Constants.CONNECTINGBUTTON_CONNECT;
                 closeClient();
             }
         }

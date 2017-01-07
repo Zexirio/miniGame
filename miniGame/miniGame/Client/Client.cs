@@ -28,7 +28,7 @@ namespace miniGame {
                     , null);
             } catch (Exception ex) {
                 MessageBox.Show("Can't connect" + ex.StackTrace);
-                form1.setButtonStatus(new string[] { "sendBUTTON" }, new bool[] { false });
+                form1.updateControl(new string[] { Constants.SENDBUTTON_NAME }, new bool[] { false });
             }
         }
 
@@ -37,13 +37,11 @@ namespace miniGame {
         private void OnConnect(IAsyncResult ar) {
             if (client.Connected) {
                 client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive), client);
-               form1.setButtonStatus(new string[] { "sendBUTTON" }
-                                     , new bool[] { true });
-                form1.changeLabel(true);
+               form1.updateControl( new string[] { Constants.SENDBUTTON_NAME, Constants.CONNECTIONSTATUSLABEL_NAME }
+                                  , new bool[] { true, true });
             } else {
-               // MessageBox.Show("Not Connected");
-                form1.setButtonStatus( new string[] { "connectingBUTTON"}, new bool[] { false});
-                form1.changeLabel(false);
+                form1.updateControl( new string[] { Constants.CONNECTINGBUTTON_NAME, Constants.CONNECTIONSTATUSLABEL_NAME}
+                                   , new bool[] { false, false });
             }
         }
 
@@ -52,14 +50,13 @@ namespace miniGame {
             try {
                 client.EndReceive(ar);
                 client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive), client);
-                form1.Chat(Encoding.GetEncoding("iso-8859-1").GetString(bytes_in));
+                form1.Chat(Encoding.GetEncoding(Constants.ENCODINGFORMAT).GetString(bytes_in));
                 Array.Clear(bytes_in, 0, bytes_in.Length);
             } catch (Exception ex) {
                 if (!client.Connected) {
                     client.Close();
-                    form1.setButtonStatus(new string[] { "sendBUTTON" }, new bool[] { false });
-                    form1.setButtonStatus(new string[] { "connectingBUTTON" }, new bool[] { false });
-                    form1.changeLabel(false);
+                    form1.updateControl( new string[] { Constants.SENDBUTTON_NAME, Constants.CONNECTINGBUTTON_NAME, Constants.CONNECTIONSTATUSLABEL_NAME }
+                                       , new bool[] { false, false, false });
                 } else {
                     MessageBox.Show(ex.StackTrace);
                 }
