@@ -57,7 +57,7 @@
             this.playerC.Text = "C";
             this.playerC.UseVisualStyleBackColor = false;
             this.playerC.Click += new System.EventHandler(this.playerC_Click);
-            this.playerC.KeyDown += new System.Windows.Forms.KeyEventHandler(this.mover_Client);
+            this.playerC.KeyDown += new System.Windows.Forms.KeyEventHandler(this.mover);
             // 
             // connectingBUTTON
             // 
@@ -193,7 +193,7 @@
             this.playerH.Text = "H";
             this.playerH.UseVisualStyleBackColor = false;
             this.playerH.Click += new System.EventHandler(this.playerH_Click);
-            this.playerH.KeyDown += new System.Windows.Forms.KeyEventHandler(this.mover_Server);
+            this.playerH.KeyDown += new System.Windows.Forms.KeyEventHandler(this.mover);
             // 
             // label1
             // 

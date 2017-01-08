@@ -64,13 +64,9 @@ namespace miniGame {
         }
         /***********************************************************************************************************/
 
-
-        private void mover_Client(object sender, KeyEventArgs e)
-        {
-
+        private void mover(object sender, KeyEventArgs e) {
             byte[] coord;
-            switch (e.KeyCode)
-            {
+            switch (e.KeyCode) {
                 case Keys.W:
                     if (myPlayer.Top > 0) { myPlayer.Top -= 5; }
                     break;
@@ -88,34 +84,11 @@ namespace miniGame {
                     break;
             }
             coord = enc.GetBytes("mov," + myPlayer.Location.X + "," + myPlayer.Location.Y);
-            if (myPlayer.Focused) { myClient.getClient().Send(coord, coord.Length, SocketFlags.None); }
-            coordinates.Text = myPlayer.Location.X + ":" + myPlayer.Location.Y;
-        }
-
-
-        private void mover_Server(object sender, KeyEventArgs e)
-        {
-            byte[] coord;
-            switch (e.KeyCode)
-            {
-                case Keys.W:
-                    if (myPlayer.Top > 0) { myPlayer.Top -= 5; }
-                    break;
-
-                case Keys.S:
-                    if (myPlayer.Top < (map.Height - myPlayer.Height) - 5) { myPlayer.Top += 5; }
-                    break;
-
-                case Keys.A:
-                    if (myPlayer.Left > 0) { myPlayer.Left -= 5; }
-                    break;
-
-                case Keys.D:
-                    if (myPlayer.Left < (map.Width - myPlayer.Width) - 5) { myPlayer.Left += 5; }
-                    break;
+            if(isHost) {
+                if (myPlayer.Focused) { myServer.getClient().Send(coord, coord.Length, SocketFlags.None); }
+            } else {
+                if (myPlayer.Focused) { myClient.getClient().Send(coord, coord.Length, SocketFlags.None); }
             }
-            coord = enc.GetBytes("mov," + myPlayer.Location.X + "," + myPlayer.Location.Y);
-            if (myPlayer.Focused) { myServer.getClient().Send(coord, coord.Length, SocketFlags.None); }
             coordinates.Text = myPlayer.Location.X + ":" + myPlayer.Location.Y;
         }
 
