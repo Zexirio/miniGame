@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace miniGame {
@@ -85,8 +86,10 @@ namespace miniGame {
             }
             coord = enc.GetBytes("mov," + myPlayer.Location.X + "," + myPlayer.Location.Y);
             if(isHost) {
+                Thread.Sleep(750);
                 if (myPlayer.Focused) { myServer.getClient().Send(coord, coord.Length, SocketFlags.None); }
             } else {
+                Thread.Sleep(750);
                 if (myPlayer.Focused) { myClient.getClient().Send(coord, coord.Length, SocketFlags.None); }
             }
             coordinates.Text = myPlayer.Location.X + ":" + myPlayer.Location.Y;
@@ -140,8 +143,6 @@ namespace miniGame {
         private void MessageToSend_KeyDown(object sender, KeyEventArgs e) {
             if (e.KeyCode == Keys.Enter) { sendBUTTON.PerformClick(); }
         }
-
-        private void radioButton_CheckedChanged(object sender, EventArgs e) { }
 
         private void startServer() {
             if (myServer != null && myServer.getClient() != null) { closeServer(); }
