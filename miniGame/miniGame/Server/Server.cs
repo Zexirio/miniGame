@@ -8,14 +8,14 @@ using System.Net;
 namespace miniGame {
     public class Server : IServer {
         IForm form1;
-        Button pg;
+        Button player1;
         Socket server = default(Socket);
         Socket client = default(Socket);
         byte[] bytes_in = new byte[1024];
 
-        public Server(Form1 form1, Button pg) {
+        public Server(Form1 form1, Button player1) {
             this.form1 = form1;
-            this.pg = pg;
+            this.player1 = player1;
             //createServer();
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
@@ -34,8 +34,8 @@ namespace miniGame {
             try {
                 client = server.EndAccept(ar);
                 client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive_Server), client);
-                form1.updateControl( new string[] { Constants.SENDBUTTON_NAME, Constants.CONNECTIONSTATUSLABEL_NAME }
-                                   , new bool[] { true, true });
+                form1.updateControl( new string[] { Constants.SENDBUTTON_NAME, Constants.CONNECTIONSTATUSLABEL_NAME, Constants.MOVEMENTCHECKBOX_NAME }
+                                   , new bool[] { true, true, true });
             } catch (Exception ex) {
                 //fottesega
             }
@@ -47,17 +47,18 @@ namespace miniGame {
                 client.EndReceive(ar);
                 client.BeginReceive(bytes_in, 0, bytes_in.Length, SocketFlags.None, new AsyncCallback(OnReceive_Server), client);
                 string message = Encoding.GetEncoding(Constants.ENCODINGFORMAT).GetString(bytes_in);
-                if (message.Contains("mov")) {
+                if (message.StartsWith("mov")) {
                     string[] xy = message.Split(',');
                     Move(Convert.ToInt32(xy[1]), Convert.ToInt32(xy[2]));
                 }
-                form1.Chat(message);
+                else { form1.Chat(message); }
+                
                 Array.Clear(bytes_in, 0, bytes_in.Length);
             } catch (Exception ex) {
                 if (!client.Connected) {
                     client.Close();
-                    form1.updateControl( new string[] { Constants.SENDBUTTON_NAME, Constants.CONNECTIONSTATUSLABEL_NAME }
-                                       , new bool[] { false, false });
+                    form1.updateControl( new string[] { Constants.SENDBUTTON_NAME, Constants.CONNECTIONSTATUSLABEL_NAME, Constants.MOVEMENTCHECKBOX_NAME }
+                                       , new bool[] { false, false, false });
                     server.Close();
                 } else {
                     MessageBox.Show(ex.StackTrace);
@@ -66,8 +67,8 @@ namespace miniGame {
         }
 
         public void Move(int x, int y) {
-            if (Utils.ControlInvokeRequired(pg, () => Move(x, y))) return;
-            pg.Location = new Point(x, y);
+            if (Utils.ControlInvokeRequired(player1, () => Move(x, y))) return;
+            player1.Location = new Point(x, y);
         }
 
         public Socket getClient() { return client; }

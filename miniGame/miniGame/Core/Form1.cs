@@ -11,13 +11,11 @@ namespace miniGame {
         Encoding enc = Encoding.GetEncoding(Constants.ENCODINGFORMAT);
         IServer myServer;
         IClient myClient;
+        Button myPlayer = new Button();
 
         public Form1() { InitializeComponent(); }
 
-        public void Form1_Load(object sender, EventArgs e) {
-            sendBUTTON.Enabled = false;
-            richTextBox1.ReadOnly = true;
-        }
+        public void Form1_Load(object sender, EventArgs e) { }
 
         /******** Sono metodi richiamati dalle classi server/client per rilasciare modifiche ai controlli ********/
         public void Chat(string msg) {
@@ -55,6 +53,9 @@ namespace miniGame {
                                 Utils.ControlInvokeRequired(connectionStatusLABEL, () => connectionStatusLABEL.ForeColor = System.Drawing.Color.Red);
                             }
                             break;
+                        case Constants.MOVEMENTCHECKBOX_NAME:
+                            Utils.ControlInvokeRequired(moveCheckbox, () => moveCheckbox.Enabled = status[i]);
+                            break;
                         default:
                             throw new Exception("Control" + controlNames[i] + "not exist!");
                     }
@@ -64,34 +65,58 @@ namespace miniGame {
         /***********************************************************************************************************/
 
 
-        private void mover(object sender, KeyEventArgs e) {
-            byte[] bytes;
-            bool moved = false;
-            switch (e.KeyCode) {
+        private void mover_Client(object sender, KeyEventArgs e)
+        {
+
+            byte[] coord;
+            switch (e.KeyCode)
+            {
                 case Keys.W:
-                    pg.Top -= 5;
-                    moved = true;
+                    if (myPlayer.Top > 0) { myPlayer.Top -= 5; }
                     break;
 
                 case Keys.S:
-                    pg.Top += 5;
-                    moved = true;
+                    if (myPlayer.Top < (map.Height - myPlayer.Height) - 5) { myPlayer.Top += 5; }
                     break;
 
                 case Keys.A:
-                    pg.Left -= 5;
-                    moved = true;
+                    if (myPlayer.Left > 0) { myPlayer.Left -= 5; }
                     break;
 
                 case Keys.D:
-                    pg.Left += 5;
-                    moved = true;
+                    if (myPlayer.Left < (map.Width - myPlayer.Width) - 5) { myPlayer.Left += 5; }
                     break;
             }
-            if (moved) {
-                bytes = Encoding.ASCII.GetBytes("mov," + pg.Location.X + "," + pg.Location.Y);
-                myClient.getClient().Send(bytes, bytes.Length, SocketFlags.None);
+            coord = enc.GetBytes("mov," + myPlayer.Location.X + "," + myPlayer.Location.Y);
+            if (myPlayer.Focused) { myClient.getClient().Send(coord, coord.Length, SocketFlags.None); }
+            coordinates.Text = myPlayer.Location.X + ":" + myPlayer.Location.Y;
+        }
+
+
+        private void mover_Server(object sender, KeyEventArgs e)
+        {
+            byte[] coord;
+            switch (e.KeyCode)
+            {
+                case Keys.W:
+                    if (myPlayer.Top > 0) { myPlayer.Top -= 5; }
+                    break;
+
+                case Keys.S:
+                    if (myPlayer.Top < (map.Height - myPlayer.Height) - 5) { myPlayer.Top += 5; }
+                    break;
+
+                case Keys.A:
+                    if (myPlayer.Left > 0) { myPlayer.Left -= 5; }
+                    break;
+
+                case Keys.D:
+                    if (myPlayer.Left < (map.Width - myPlayer.Width) - 5) { myPlayer.Left += 5; }
+                    break;
             }
+            coord = enc.GetBytes("mov," + myPlayer.Location.X + "," + myPlayer.Location.Y);
+            if (myPlayer.Focused) { myServer.getClient().Send(coord, coord.Length, SocketFlags.None); }
+            coordinates.Text = myPlayer.Location.X + ":" + myPlayer.Location.Y;
         }
 
         private void connectingBUTTON_Click(object sender, EventArgs e) {
@@ -108,7 +133,20 @@ namespace miniGame {
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e) {
-            if (checkBox1.CheckState == CheckState.Checked) { pg.Focus(); }
+            if (moveCheckbox.CheckState == CheckState.Checked) {
+                if (isHost)
+                {
+                    playerH.Enabled = true;
+                    playerH.ForeColor = System.Drawing.Color.Green;
+                    playerH.Focus();
+                }
+                else
+                {
+                    playerC.Enabled = true;
+                    playerC.ForeColor = System.Drawing.Color.Green;
+                    playerC.Focus();
+                }
+            }
         }
 
         private void sendBUTTON_Click(object sender, EventArgs e) {
@@ -135,16 +173,18 @@ namespace miniGame {
         private void startServer() {
             if (myServer != null && myServer.getClient() != null) { closeServer(); }
             isHost = true;
-            myServer = new Server(this, pg);
+            myServer = new Server(this, playerC);
             connectingBUTTON.Enabled = false;
+            myPlayer = playerH;
         }
 
         private void startClient() {
             if (myClient != null && myClient.getClient() != null) { closeClient(); }
             connectingBUTTON.Enabled = true;
-            myClient = new Client(this, serverIP.Text, 9999);
+            myClient = new Client(this, serverIP.Text, 9999, playerH);
             isHost = false;
             myClient.connect();
+            myPlayer = playerC;
         }
 
         private void closeServer() {
@@ -172,6 +212,21 @@ namespace miniGame {
                 if (myClient != null) { closeClient(); }
                 myServer.createServer();
             }
+        }
+
+        private void map_Click(object sender, EventArgs e)
+        {
+            if (moveCheckbox.Checked) { myPlayer.Focus(); }
+        }
+
+        private void playerH_Click(object sender, EventArgs e)
+        {
+            myPlayer.Focus();
+        }
+
+        private void playerC_Click(object sender, EventArgs e)
+        {
+            myPlayer.Focus();
         }
     }
 }

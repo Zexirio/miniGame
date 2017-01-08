@@ -11,6 +11,8 @@
         public const string CONNECTIONSTATUSLABEL_NOTCONNECTED = "Not connected";
         public const string CONNECTIONSTATUSLABEL_SEARCHING = "Searching..";
 
+        public const string MOVEMENTCHECKBOX_NAME = "moveCheckbox";
+
         public const string ENCODINGFORMAT = "iso-8859-1";
     }
 }
