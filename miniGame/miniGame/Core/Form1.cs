@@ -13,10 +13,13 @@ namespace miniGame {
         IServer myServer;
         IClient myClient;
         Button myPlayer = new Button();
+        byte[] coord;
 
         public Form1() { InitializeComponent(); }
 
-        public void Form1_Load(object sender, EventArgs e) { }
+        public void Form1_Load(object sender, EventArgs e) {
+            enc.GetBytes("mov," + myPlayer.Location.X + "," + myPlayer.Location.Y);
+        }
 
         /******** Sono metodi richiamati dalle classi server/client per rilasciare modifiche ai controlli ********/
         public void Chat(string msg) {
@@ -49,9 +52,11 @@ namespace miniGame {
                             if (status[i]) {
                                 Utils.ControlInvokeRequired(connectionStatusLABEL, () => connectionStatusLABEL.Text = Constants.CONNECTIONSTATUSLABEL_CONNECTED);
                                 Utils.ControlInvokeRequired(connectionStatusLABEL, () => connectionStatusLABEL.ForeColor = System.Drawing.Color.Green);
+                                timer1.Start();
                             } else {
                                 Utils.ControlInvokeRequired(connectionStatusLABEL, () => connectionStatusLABEL.Text = Constants.CONNECTIONSTATUSLABEL_NOTCONNECTED);
                                 Utils.ControlInvokeRequired(connectionStatusLABEL, () => connectionStatusLABEL.ForeColor = System.Drawing.Color.Red);
+                                timer1.Stop();
                             }
                             break;
                         case Constants.MOVEMENTCHECKBOX_NAME:
@@ -66,7 +71,7 @@ namespace miniGame {
         /***********************************************************************************************************/
 
         private void mover(object sender, KeyEventArgs e) {
-            byte[] coord;
+            
             switch (e.KeyCode) {
                 case Keys.W:
                     if (myPlayer.Top > 0) { myPlayer.Top -= 5; }
@@ -84,15 +89,7 @@ namespace miniGame {
                     if (myPlayer.Left < (map.Width - myPlayer.Width) - 5) { myPlayer.Left += 5; }
                     break;
             }
-            coord = enc.GetBytes("mov," + myPlayer.Location.X + "," + myPlayer.Location.Y);
-            if(isHost) {
-                Thread.Sleep(750);
-                if (myPlayer.Focused) { myServer.getClient().Send(coord, coord.Length, SocketFlags.None); }
-            } else {
-                Thread.Sleep(750);
-                if (myPlayer.Focused) { myClient.getClient().Send(coord, coord.Length, SocketFlags.None); }
-            }
-            coordinates.Text = myPlayer.Location.X + ":" + myPlayer.Location.Y;
+            
         }
 
         private void connectingBUTTON_Click(object sender, EventArgs e) {
@@ -201,6 +198,20 @@ namespace miniGame {
         private void playerC_Click(object sender, EventArgs e)
         {
             myPlayer.Focus();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            coord = enc.GetBytes("mov," + myPlayer.Location.X + "," + myPlayer.Location.Y);
+            if (isHost)
+            {
+                if (myPlayer.Focused) { myServer.getClient().Send(coord, coord.Length, SocketFlags.None); }
+            }
+            else
+            {
+                if (myPlayer.Focused) { myClient.getClient().Send(coord, coord.Length, SocketFlags.None); }
+            }
+            coordinates.Text = myPlayer.Location.X + ":" + myPlayer.Location.Y;
         }
     }
 }

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.playerC = new System.Windows.Forms.Button();
             this.connectingBUTTON = new System.Windows.Forms.Button();
             this.serverPORT = new System.Windows.Forms.TextBox();
@@ -42,6 +43,7 @@
             this.playerH = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.coordinates = new System.Windows.Forms.Label();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.map.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -212,6 +214,12 @@
             this.coordinates.Size = new System.Drawing.Size(0, 13);
             this.coordinates.TabIndex = 20;
             // 
+            // timer1
+            // 
+            this.timer1.Enabled = true;
+            this.timer1.Interval = 150;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -256,6 +264,7 @@
         private System.Windows.Forms.Button playerH;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label coordinates;
+        private System.Windows.Forms.Timer timer1;
     }
 }
 
